@@ -6,9 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <!--    <link rel="icon" href="../../favicon.ico" -->
+    <link rel="icon" href="../ico/whole_hand-25" type="image/png" sizes="25x25">
+    <link rel="shortcut icon" href="ico/whole_hand-25.png">
+    <link rel="apple-touch-icon" href="ico/whole_hand-25.png">
+    <link rel="apple-touch-icon" sizes="75x75" href="ico/whole_hand-75.png">
+    <link rel="apple-touch-icon" sizes="128x128" href="ico/whole_hand-128.png">
 
-    <title>Memorizer</title>
+    <title>@string:app_name</title>
 
     <!-- Bootstrap core CSS -->
     <link href="fw/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -25,25 +29,22 @@
 
 <body>
 
-<div class="site-wrapper">
+<div class="container">
+    <div class="header">
+        [+menu+]
+    </div>
 
-    <div class="site-wrapper-inner">
+    <div class="row">
+        [+content+]
+    </div>
+    <div id="result" class="row"></div>
 
-        <div class="cover-container">
-
-            <div class="inner cover">
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        [+content+]
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
+    <div class="footer">
+        [+footer+]
     </div>
 
 </div>
+<!-- /container -->
 
 <!-- Bootstrap core JavaScript
 ================================================== -->
@@ -51,6 +52,8 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="fw/bootstrap/js/bootstrap.js"></script>
 <script src="js/cookie.js"></script>
+<script src="js/utility.js"></script>
+<script src="js/search.js"></script>
 [+script+]
 
 </body>

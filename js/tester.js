@@ -11,25 +11,22 @@ $(document).ready(function() {
 
         $.ajax({
             type: 'POST',
-            url: 'ajaxTester.php',
+            url: 'ajax.php',
             data: {command: "getRandomWord", idLanguage: idLanguage},
             success: function(data) {
-                console.log(data);
+                console.log('data: ' + data);
 
                 var object = jQuery.parseJSON(data);
-                bake_cookie("memorizer", object);
+                bake_cookie("memorizer", object.word);
 
                 if(object != null)
-                    updateCard(object);
+                    updateCard(object.word);
 
-//                message = alertResult(object.result_code, object.result_message + object.result_sql);
-
-//                $('#result').html($('#result').html() + message);
-//                $('#tableCompany tbody').append(object.aux);
+                $('#result').html(alertResult(object.code, object.message, object.sql));
 
             },
-            error: function (request, status, error) {
-              alert(request.responseText);
+            error: function(request, status, error) {
+                alert(request.responseText);
             }
         });
         return false;
@@ -67,56 +64,28 @@ function updateCardFromCookie() {
 function updateCard(object) {
 
     if($("#radioWordStructure .btn input:checked").val() == 1) {
-        word = object.wordStructure.replace(/!/g, '&#x301;');
+        word = object.structure.replace(/!/g, '&#x301;');
         word = word.replace(/\[/g, '<span class="accent">');
         word = word.replace(/\]/g, '</span>');
         word = word.charAt(0).toUpperCase() + word.slice(1);
         $('#word').html(word);
     } else {
-        $('#word').html(object.wordWord);
+        $('#word').html(object.word);
     }
 
-    //$('#brief').html(object.wordBrief + "&nbsp;");
+    //$('#brief').html(object.brief + "&nbsp;");
 
     var translations = [];
-    translations = object.wordTranslation;
+    translations = object.translation;
     $('#translation').html("");
     for(var t in translations) {
-        trans = '<p class="translation">' + translations[t].transWord;
-        if(parseInt(translations[t].transLanguageId) == 3) { // FIXME: hardcoded language
-            trans += ' <span>(' + translations[t].transStructure + ')</span></p>'
+        trans = '<p class="translation">' + translations[t].word;
+        if(parseInt(translations[t].id_language) == 3) { // FIXME: hardcoded language
+            trans += ' <span>(' + translations[t].structure + ')</span></p>'
         }
         $('#translation').html($('#translation').html() + trans);
-//                    alert("" + t + translations[t]);
     }
-}
 
-function alertResult(result_code, result_message)
-{
-  var alert_class = "warning";
-  var alert_title = "";
-
-  switch(parseInt(result_code))
-  {
-    case 0:
-      alert_class = "success";
-      break;
-    case 1:
-      alert_class = "danger";
-      alert_title = "Ошибка!";
-      break;
-    default:
-      alert_class = "warning";
-      alert_title = "Предупреждение!";
-      break;
-  }
-
-  content = '<div class="alert alert-' + alert_class + ' fade in\">\n \
-    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>\n \
-    <strong>'+ alert_title +'</strong> ' + result_message + '\n \
-    </div>\n';
-
-  return content;
 }
 
 

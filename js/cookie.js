@@ -1,5 +1,3 @@
-
-
 function bake_cookie(name, value) {
     var cookie = [name, '=', JSON.stringify(value)].join('');
     console.log(cookie);

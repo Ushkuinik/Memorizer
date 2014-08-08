@@ -6,9 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <!--    <link rel="icon" href="../../favicon.ico" -->
+    <link rel="icon" href="../ico/whole_hand-25" type="image/png" sizes="25x25">
+    <link rel="shortcut icon" href="../ico/whole_hand-25.png">
+    <link rel="apple-touch-icon" href="../ico/whole_hand-25.png">
+    <link rel="apple-touch-icon" sizes="75x75" href="../ico/whole_hand-75.png">
+    <link rel="apple-touch-icon" sizes="128x128" href="../ico/whole_hand-128.png">
 
-    <title>Cover Template for Bootstrap</title>
+    <title>Memorizer</title>
 
     <!-- Bootstrap core CSS -->
     <link href="../fw/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -25,37 +29,81 @@
 
 <body>
 
-<div class="site-wrapper">
+<div class="container">
+    <div class="header">
+        <ul class="nav nav-pills pull-right">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+        <h3 class="text-muted">Memorizer</h3>
+    </div>
 
-    <div class="site-wrapper-inner">
+    <div class="col-lg-12">
+        <h4>Subheading</h4>
 
-        <div class="cover-container">
+        <p>Donec id elit non mi porta gravida at eget metus. Maecenas faucibus mollis interdum.</p>
 
-            <div class="inner cover">
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        <button type="button" class="btn btn-default btn-lg pull-left">Параметры</button>
-                        <div class="clearfix"></div>
-                        <br />
-                        <div class="card">
-                            <h1>З<span class="accent">а&#x301;</span>мок</h1>
-                            <h3 class="brief">Оборонительное сооружение</h3>
-                        </div>
-                        <br/>
-                        <button type="button" class="btn btn-primary btn-lg pull-left">Назад</button>
-                        <button type="button" class="btn btn-warning btn-lg">Помощь</button>
-                        <button type="button" class="btn btn-success btn-lg">Ok</button>
-                        <button type="button" class="btn btn-primary btn-lg pull-right">Вперед</button>
-                    </div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="btn-group">
+                    <button id="selectMainLanguage" type="button" class="btn btn-default dropdown-toggle"
+                            data-toggle="dropdown" data-value="3">Японский <span class="caret"></span></button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="2">Английский</a></li>
+                        <li><a href="1">Русский</a></li>
+                        <li><a href="3">Японский</a></li>
+                    </ul>
                 </div>
-            </div>
 
+                <div id="radioWordStructure" class="btn-group" data-toggle="buttons">
+                    <label class="btn btn-default active">
+                        <input type="radio" name="options" value="0"> Слово
+                    </label>
+                    <label class="btn btn-default">
+                        <input type="radio" name="options" value="1"> Структура
+                    </label>
+                </div>
+
+                <div class="clearfix"></div>
+                <br/>
+
+                <div class="card">
+                    <h1 id="word">&nbsp;</h1>
+
+                    <h3 id="brief" class="brief"></h3>
+
+                    <div id="translation" hidden>&nbsp;</div>
+                </div>
+                <br/>
+                <button type="button" class="btn btn-primary btn-lg">Назад</button>
+                <button id="buttonHelp" type="button" class="btn btn-warning btn-lg">Помощь</button>
+                <button type="button" class="btn btn-success btn-lg">Ok</button>
+                <button id="buttonNext" type="button" class="btn btn-primary btn-lg pull-right">Вперед</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row marketing">
+        <div class="col-lg-6">
+            <h4>Subheading</h4>
+
+            <p>Donec id elit non mi porta gravida at eget metus. Maecenas faucibus mollis interdum.</p>
         </div>
 
+        <div class="col-lg-6">
+            <h4>Subheading</h4>
+
+            <p>Donec id elit non mi porta gravida at eget metus. Maecenas faucibus mollis interdum.</p>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>&copy; Company 2014</p>
     </div>
 
 </div>
-
+<!-- /container -->
 <!-- Bootstrap core JavaScript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
