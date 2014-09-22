@@ -40,7 +40,7 @@ class pageConfig extends Page
         $content = '';
 
         if(is_numeric($_id)) {
-            $result = getWord($_mysqli, $_id, true);
+            $result = sqlGetWord($_mysqli, $_id, true);
             if($result['code'] == 0) {
                 $details           = $result['word'];
                 $id                = $details['id'];
@@ -133,7 +133,9 @@ class pageConfig extends Page
                 <label for="inputStructure1">@string:label_brief</label>
                 <input id="inputBrief1" class="form-control" type="text" placeholder="@string:placeholder_brief" value="' . $brief . '"></p>
             </div>
-            <button id="buttonAddWord" type="submit" class="btn btn-success" disabled="disabled">@string:button_add_word</button>
+            <p><button id="buttonAddWord1" class="btn btn-success">@string:button_add_word</button></p>
+            <p><button id="buttonDeleteWord1" class="btn btn-warning">@string:button_delete_word</button></p>
+            <p><button id="buttonSaveWord1" class="btn btn-primary">@string:button_save_word</button></p>
         </form>
     </div>
 
@@ -167,6 +169,9 @@ class pageConfig extends Page
                 <label for="inputStructure2">@string:label_brief</label>
                 <input id="inputBrief2" class="form-control" type="text" placeholder="@string:placeholder_brief" value="' . $brief . '"></p>
             </div>
+            <p><button id="buttonAddWord2" class="btn btn-success">@string:button_add_word</button></p>
+            <p><button id="buttonDeleteWord2" class="btn btn-warning">@string:button_delete_word</button></p>
+            <p><button id="buttonSaveWord2" class="btn btn-primary">@string:button_save_word</button></p>
         </form>
 
         <label for="listTranslation">@string:label_translation</label>' .
@@ -233,6 +238,8 @@ class pageConfig extends Page
 
         return '<span class="structure">' . ($result) . '</span>';
     }
+
+
 }
 
 ?>

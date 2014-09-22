@@ -9,11 +9,11 @@ $mysqli = connectDB($db_host, $db_user, $db_pass, $db_base);
 
 switch($command) {
     case 'getRandomWord':
-        $content = getRandomWord($mysqli, $_REQUEST['idLanguage']);
+        $content = sqlGetRandomWord($mysqli, $_REQUEST['idLanguage']);
         break;
 
     case 'getWord':
-        $content = getWord($mysqli, $_REQUEST['id'],  $_REQUEST['flag']);
+        $content = sqlGetWord($mysqli, $_REQUEST['id'],  $_REQUEST['flag']);
         break;
 
     case 'searchSuggest':
@@ -22,13 +22,20 @@ switch($command) {
         break;
 
     case 'addWord':
-        $content = $config->addWord($_REQUEST['word'], $_REQUEST['structure'], $_REQUEST['brief'], $_REQUEST['idLanguage'], $_REQUEST['idPartOfSpeech']);
+        $content = sqlAddWord($_REQUEST['word'], $_REQUEST['structure'], $_REQUEST['brief'], $_REQUEST['idLanguage'], $_REQUEST['idPartOfSpeech']);
         break;
     case 'saveWord':
-        $content = $config->saveWord($_REQUEST['id'], $_REQUEST['word'], $_REQUEST['structure'], $_REQUEST['brief'], $_REQUEST['idLanguage'], $_REQUEST['idPartOfSpeech']);
+        $content = sqlEditWord($_REQUEST['id'], $_REQUEST['word'], $_REQUEST['structure'], $_REQUEST['brief'], $_REQUEST['idLanguage'], $_REQUEST['idPartOfSpeech']);
         break;
     case 'deleteWord':
-        $content = $config->deleteWord($_REQUEST['id']);
+        $content = sqlDeleteWord($_REQUEST['id']);
+        break;
+
+    case 'linkWords':
+        $content = sqlLinkWords($_REQUEST['id1'], $_REQUEST['id2']);
+        break;
+    case 'unlinkWords':
+        $content = sqlUnlinkWords($_REQUEST['id1'], $_REQUEST['id2']);
         break;
 }
 

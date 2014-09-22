@@ -33,7 +33,7 @@ $(document).ready(function() {
             search_input.focus();
         }
         else {
-            console.log("ищем: " + search_text);
+            console.log("Автоподсказка ищет: " + search_text);
             if(search_input.attr('data').length > 0) {
                 //console.log("прыг на : " + search_input.attr('data'));
 //                document.location.href = search_input.attr('data');
@@ -53,6 +53,7 @@ $(document).ready(function() {
         switch(event.keyCode) {
             case 13: // enter
                 event.preventDefault();
+                console.log("Поймали Enter в форме поиска");
                 if(suggest_list.is(':visible')) {
 //                    event.preventDefault();
                     if(suggest_list.find('.btn-info').length) {
@@ -60,19 +61,23 @@ $(document).ready(function() {
                             search_input.val(removeDecorations(suggest_list.find('.btn-info a').text()));
 
                             search_input.attr('data', suggest_list.find('.btn-info a').attr('href'));
-//                            document.location.href = suggest_list.find('.btn-info a').attr('href');
-//                            console.log("Cсылка: " + suggest_list.find('.btn-info a').attr('href'));
+                            console.log("Выбранный элемент - ссылка: " + suggest_list.find('.btn-info a').attr('href'));
+                            console.log("Подставляем его в строку поиска");
+                            $(this).submit();
                         }
                         else {
-//                            console.log("Не ссылка");
+                            console.log("Не ссылка");
                         }
                         suggest_list.slideUp("fast");
                         search_input.focus();
                         handled = true;
                     }
+                    else {
+                        $(this).submit(); // запускаем обработку слова, которое не выбрано из подсказки (подсказка видна)
+                    }
                 }
                 else {
-                    $(this).submit();
+                    $(this).submit(); // запускаем обработку слова, для которого нет всплывающей подсказки
                 }
                 break;
             case 40: // down arrow
@@ -136,14 +141,13 @@ $(document).ready(function() {
                                 var a = suggest_list.find('.suggestEmphasis').parent();
                                 var suggest = removeDecorations(a.text());//.replace(/\u0301/g, '');
                                 if((suggest.length) && (suggest == search_input.val())) {
-                                    search_input.attr('data', a.attr('href'));
+//                                    search_input.attr('data', a.attr('href'));
 //                                    console.log("Нашли подходящий элемент");
                                 }
                             }
                         }
                         else
                             suggest_list.hide();
-
                     }
                 });
             }
@@ -152,8 +156,19 @@ $(document).ready(function() {
                 suggest_list.hide();
             }
         }
+/*
+        event.preventDefault();
+        return false;
+*/
     });
 
+    $(".form-search").keypress(function(e) {
+        var code = e.keyCode || e.which;
+        if (code  == 13) {
+            e.preventDefault();
+            return false;
+        }
+    });
 
     $('.btn-info a').keyup(function(event) {
 
@@ -177,7 +192,7 @@ $(document).ready(function() {
                     }
                 }
                 else {
-                    $(this).submit();
+//                    $(this).submit();
                 }
                 break;
         }
@@ -192,6 +207,6 @@ $(document).ready(function() {
         search_input.val($(this).text());
         search_input.attr('data', $(this).attr('href'));
         search_input.focus();
-        $(this).parents('.form-search').submit();
+        //$(this).parents('.form-search').submit();
     });
 });
