@@ -50,7 +50,7 @@ class pageTester extends Page
                     <div id="translation" hidden>&nbsp;</div>
                 </div>
                 <br/>
-                <button type="button" class="btn btn-primary btn-lg">@string:button_prev</button>
+                <button id="buttonPrevious" type="button" class="btn btn-primary btn-lg">@string:button_prev</button>
                 <button id="buttonHelp" type="button" class="btn btn-warning btn-lg">@string:button_help</button>
                 <button type="button" class="btn btn-success btn-lg">@string:button_ok</button>
                 <button id="buttonNext" type="button" class="btn btn-primary btn-lg pull-right">@string:button_next</button>

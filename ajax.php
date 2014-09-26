@@ -37,6 +37,10 @@ switch($command) {
     case 'unlinkWords':
         $content = sqlUnlinkWords($_REQUEST['id1'], $_REQUEST['id2']);
         break;
+
+    case 'importWords':
+        $content = sqlImportWords($_REQUEST['data'], $_REQUEST['idLanguage'], $_REQUEST['idCategory']);
+        break;
 }
 
 disconnectDB($mysqli);

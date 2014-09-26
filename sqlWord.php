@@ -109,6 +109,41 @@ WHERE word.id=' . $_id;
 }
 
 
+//
+//
+//
+function sqlGetWordByWord($_mysqli, $_word)
+{
+    $word           = array();
+    $result['code'] = 0;
+
+    $result['sql'] = '
+SELECT
+    word.id
+FROM word
+WHERE word.word LIKE ' . $_word;
+
+    $sql_result        = $_mysqli->query($result['sql']);
+    $result['code']    = ($sql_result) ? 0 : 1;
+    $result['message'] = ($result['code'] == 0) ? '' : 'SQL request failed';
+
+    $word['id'] = 0;
+    if($result['code'] == 0)
+        if ($sql_result->num_rows > 0)
+            if($object = $sql_result->fetch_object())
+                $result['word_id'] = $object->id;
+            else {
+                $result['code'] = 1;
+                $result['message'] = 'Failed to fetch object';
+            }
+
+    unset($object);
+    unset($sql_result);
+
+    return $result;
+}
+
+
 function sqlGetWordTranslations($_mysqli, $_id, &$_result)
 {
     $_result['sql'] = "
@@ -189,11 +224,14 @@ function sqlAddWord($_word, $_structure, $_brief, $_idLanguage, $_idPartOfSpeech
                 $result = sqlAddBrief($id_word, $brief);
             }
         }
-
     }
 
     unset($object);
     unset($sql_result);
+
+    if($result['code'] == 0) {
+        $result['message'] = "Word <b>" . $word . "</b> was added successfully";
+    }
 
     return $result;
 }
@@ -373,11 +411,6 @@ function sqlDeleteWord($_id)
         $result['message'] = "Invalid word id: " . $_id;
     }
     if($result['code'] == 0) {
-        $result['sql']     = "DELETE FROM word WHERE id=$_id";
-        $result['code']    = ($mysqli->query($result['sql'])) ? 0 : 1;
-        $result['message'] = ($result['code'] == 0) ? "Word deleted." : "Word can't be deleted.";
-    }
-    if($result['code'] == 0) {
         $result['sql']     = "DELETE FROM brief WHERE id_word=$_id";
         $result['code']    = ($mysqli->query($result['sql'])) ? 0 : 1;
         $result['message'] = ($result['code'] == 0) ? "Brief deleted." : "Brief can't be deleted.";
@@ -387,7 +420,11 @@ function sqlDeleteWord($_id)
         $result['code']    = ($mysqli->query($result['sql'])) ? 0 : 1;
         $result['message'] = ($result['code'] == 0) ? "Links deleted." : "Links can't be deleted.";
     }
-
+    if($result['code'] == 0) {
+        $result['sql']     = "DELETE FROM word WHERE id=$_id";
+        $result['code']    = ($mysqli->query($result['sql'])) ? 0 : 1;
+        $result['message'] = ($result['code'] == 0) ? "Word deleted." : "Word can't be deleted.";
+    }
     return $result;
 }
 
@@ -489,3 +526,32 @@ function getSafeString($_mysqli, $_string, $_length)
     return $result;
 }
 
+function sqlImportWords($_data, $_id_language, $_id_category) {
+    global $mysqli;
+    $data = str_replace("\n\r", "\n", $_data);
+    $lines = explode("\n", $data);
+    foreach($lines as $k => $line) {
+        $parts = explode(",", $line);
+        $word           = $parts[0];
+        $structure      = $parts[1];
+        $part_of_speech = $parts[2];
+        $brief          = $parts[3];
+        $id = sqlGetWordByWord($mysqli, $word);
+
+        if($id == 0) {
+            $result = sqlAddWord($word, $structure, $brief, $_id_language, $part_of_speech);
+            if($result['code'] == 0)
+                $status_code = 0;    // successfully added
+            else
+                $status_code = 2;    // error during adding
+        }
+        else {
+            $status_code = 1;    // word already present
+        }
+        $status['word'] = $word;
+        $status['code'] = $status_code;
+        $status['id'] = $result['id_word'];
+        $result['status'][$k] = $status;
+    }
+    return $result;
+}

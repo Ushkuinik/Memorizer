@@ -35,13 +35,11 @@ LIMIT 10;";
 
             if($result['code'] == 0) {
                 while($object = $sql_result->fetch_object()) {
-                    $structure = $object->structure;
-                    $structure = str_replace(array('[', ']'), '', $structure);
-//                    $structure = str_replace('!', '&#x301;', $structure);
+                    $structure = $object->word;
+//                    $structure = $object->structure;
+//                    $structure = str_replace(array('[', ']'), '', $structure);
 
-//                    $word = $object->word;
                     $word = $this->markString($structure, $_string);
-//                    $word = substr($word)
 
                     $result['data'] .= '<li><a class="suggestItem " href="' . $object->id . '">' . $word . '</a></li>';
                 }

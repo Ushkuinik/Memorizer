@@ -3,6 +3,7 @@
 include_once("db.php");
 include_once("pageTester.php");
 include_once("pageConfig.php");
+include_once("pageImport.php");
 
 include_once("i18n.php");
 
@@ -23,6 +24,10 @@ try {
 
         case 'config':
             $page = new pageConfig($mysqli, $id);
+            break;
+
+        case 'import':
+            $page = new pageImport($mysqli, $id);
             break;
 
         default:

@@ -17,18 +17,22 @@ $strings['placeholder_brief']              = 'Добавьте краткое о
 $strings['label_translation']              = 'Переводы';
 $strings['placeholder_search_translation'] = 'Поиск перевода';
 
-$strings['radio_word']         = 'Слово';
-$strings['radio_structure']    = 'Структура';
-$strings['button_ok']          = 'Ок';
-$strings['button_cancel']      = 'Отмена';
-$strings['button_prev']        = 'Назад';
-$strings['button_next']        = 'Следующее';
-$strings['button_help']        = 'Помощь';
-$strings['button_save_word']   = 'Сохранить слово';
-$strings['button_new_word']    = 'Новое слово';
-$strings['button_add_word']    = 'Добавить слово';
-$strings['button_delete_word'] = 'Удалить слово';
-$strings['menu_tester']        = 'Тестирование';
-$strings['menu_config']        = 'Настройка';
+$strings['radio_word']          = 'Слово';
+$strings['radio_structure']     = 'Структура';
+$strings['button_ok']           = 'Ок';
+$strings['button_cancel']       = 'Отмена';
+$strings['button_prev']         = 'Назад';
+$strings['button_next']         = 'Следующее';
+$strings['button_help']         = 'Помощь';
+$strings['button_save_word']    = 'Сохранить';
+$strings['button_new_word']     = 'Новое слово';
+$strings['button_add_word']     = 'Добавить';
+$strings['button_delete_word']  = 'Удалить';
+$strings['button_link_words']   = 'Связать';
+$strings['button_unlink_words'] = 'Разорвать';
+$strings['button_import']       = 'Импортировать';
+$strings['menu_tester']         = 'Тестирование';
+$strings['menu_config']         = 'Настройка';
+$strings['menu_import']         = 'Импорт';
 
 ?>

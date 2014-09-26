@@ -6,7 +6,10 @@ function alertResult(_code, _message, _message_opt) {
     switch(parseInt(_code)) {
         case 0:
             alert_class = "success";
-            alert_message = "Operation succeeded";
+            if(_message.length == 0)
+                alert_message = "Operation succeeded";
+            else
+                alert_message = _message;
             break;
         case 1:
             alert_class = "danger";
@@ -34,3 +37,4 @@ function removeDecorations(_string) {
     result = result.replace(/\]/g, '');
     return result;
 }
+

@@ -180,8 +180,6 @@ $(document).ready(function() {
                     if(suggest_list.find('.btn-info').length) {
                         if(suggest_list.find('.btn-info a').attr('href') != null) {
                             search_input.val(suggest_list.find('.btn-info a').text());
-                            //document.location.href = suggest_list.find('.btn-info a').attr('href');
-//                            console.log("Cсылка: " + suggest_list.find('.btn-info a').attr('href'));
                         }
                         else {
 //                            console.log("Не ссылка");
@@ -204,9 +202,9 @@ $(document).ready(function() {
         var search_input = $(this).parents('.form-search').find('input.search-input');
 
         suggest_list.slideUp("fast");
-        search_input.val($(this).text());
+        search_input.val(removeDecorations($(this).text()));
         search_input.attr('data', $(this).attr('href'));
         search_input.focus();
-        //$(this).parents('.form-search').submit();
+        $(this).parents('.form-search').submit();
     });
 });
