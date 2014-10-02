@@ -52,6 +52,7 @@ SELECT
 	w1.id_part_of_speech  as id_part_of_speech1,
 	w2.id                 as id2,
 	w2.word               as word2,
+	w2.structure          as structure2,
 	w2.id_language        as language2,
 	w2.id_part_of_speech  as id_part_of_speech2,
 	b2.brief              as brief2
@@ -602,6 +603,7 @@ function getSafeString($_mysqli, $_string, $_length)
     $result = stripslashes(substr($_string, 0, $_length));
     $result = $_mysqli->real_escape_string(strip_tags($result));
     $result = addcslashes($result, '%_');
+    $result = trim($result);
 
     return $result;
 }
@@ -611,15 +613,28 @@ function sqlImportWords($_data, $_id_language, $_id_category) {
     $data = str_replace("\n\r", "\n", $_data);
     $lines = explode("\n", $data);
     foreach($lines as $k => $line) {
+        if(empty($line))
+            continue; // skip empty lines
         $parts = explode(",", $line);
-        if(count($parts) < 4) {
-            $result['code'] = 1;
-            $result['message'] = 'Invalid input format';
+        if(count($parts) == 0) {
+            $result['code'] = '1';
+            $result['message'] = 'Line is empty after explode';
+            break;
         } else {
-            $word           = $parts[0];
-            $structure      = $parts[1];
-            $part_of_speech = $parts[2];
-            $brief          = $parts[3];
+            $word           = getSafeString($mysqli, $parts[0], 50);
+            $structure      = $word;
+            $brief          = '';
+            $part_of_speech = '1';
+
+            if(count($parts) > 1) {
+                $structure      = getSafeString($mysqli, $parts[1], 50);
+            }
+            if(count($parts) > 2) {
+                $brief          = getSafeString($mysqli, $parts[2], 200);
+            }
+            if(count($parts) > 3) {
+                $part_of_speech = getSafeString($mysqli, $parts[3], 10);
+            }
 
             $result_inner = sqlGetWordByWord($mysqli, $word);
 
@@ -644,9 +659,11 @@ function sqlImportWords($_data, $_id_language, $_id_category) {
             else {
                 $status_code = 1;    // word already present
             }
+
             $status['word'] = $word;
             $status['code'] = $status_code;
             $status['id'] = $result_inner['id_word'];
+
             $result['status'][$k] = $status;
             $result['code'] = $result_inner['code'];
             $result['message'] = $result_inner['message'];

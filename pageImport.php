@@ -33,10 +33,7 @@ class pageImport extends Page
                 $this->getCategoryDropDown(0, 'selectCategory', ture) . '
             </div>
             <p><button class="btn btn-success import"><span class="glyphicon glyphicon-plus"></span>&nbsp;&nbsp;@string:button_import</button></p>
-            <p><textarea id="textImport" class="form-control" rows="3" value="">word1, structure1, 1, brief1
-word2, structure2, 1, brief2
-word3, structure3, 1, brief3
-word4, structure4, 1, brief4</textarea></p>
+            <p><textarea id="textImport" class="form-control" rows="3" value=""></textarea></p>
             <p><button class="btn btn-success import"><span class="glyphicon glyphicon-plus"></span>&nbsp;&nbsp;@string:button_import</button></p>
         </div>
         <div id="import2">
