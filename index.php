@@ -4,6 +4,7 @@ include_once("db.php");
 include_once("pageTester.php");
 include_once("pageConfig.php");
 include_once("pageImport.php");
+include_once("pageCategory.php");
 
 include_once("i18n.php");
 
@@ -14,7 +15,8 @@ try {
     $mysqli = connectDB();
 
     $view = isset($_GET['view']) ? $_GET['view'] : "";
-    $id   = isset($_GET['id']) ? $_GET['id'] : "";
+    $id1   = isset($_GET['id1']) ? $_GET['id1'] : "";
+    $id2   = isset($_GET['id2']) ? $_GET['id2'] : "";
 
     $page = null;
     switch($view) {
@@ -23,11 +25,15 @@ try {
             break;
 
         case 'config':
-            $page = new pageConfig($mysqli, $id);
+            $page = new pageConfig($mysqli, $id1, $id2);
             break;
 
         case 'import':
-            $page = new pageImport($mysqli, $id);
+            $page = new pageImport($mysqli);
+            break;
+
+        case 'category':
+            $page = new pageCategory($mysqli);
             break;
 
         default:

@@ -22,6 +22,7 @@ class Page
             <li><a href="index.php?view=tester">@string:menu_tester</a></li>
             <li><a href="index.php?view=config">@string:menu_config</a></li>
             <li><a href="index.php?view=import">@string:menu_import</a></li>
+            <li><a href="index.php?view=category">@string:menu_category</a></li>
         </ul>
         <h3><a class="text-muted" href="index.php">@string:app_name</a></h3>';
 
@@ -32,6 +33,25 @@ class Page
     {
         $content = '<p>&copy; Company 2014</p>';
 
+        return $content;
+    }
+
+
+    protected function getSearchComboBox($_id, $_placeholder, $_word_id, $_word) {
+        $content = '
+            <form id="' . $_id . '" class="form-search" role="search" autocomplete="off">
+                <div class="form-group">
+                    <div class="input-group">
+                        <input type="text" class="form-control search-input" placeholder="' . $_placeholder . '" value="' . $_word . '" data="' . $_word_id . '">
+                        <ul class="dropdown-menu search-suggest">
+                        </ul>
+
+                        <span class="input-group-btn">
+                            <button type="submit" class="btn"><span class="glyphicon glyphicon-search"></span></button>
+                        </span>
+                    </div>
+                </div>
+            </form>';
         return $content;
     }
 
@@ -47,8 +67,8 @@ class Page
         $flags[3] = '<img class="flag" src="img/flag_japan.png" />&nbsp;';
 
         $content      = '
-<div class="btn-group">
-    <button id="' . $_id. '" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" data-value="' . $_id_language . '">' . $flags[$_id_language] . $languages[$_id_language] . ' <span class="caret"></span></button>
+<div id="' . $_id. '" class="btn-group">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" data="' . $_id_language . '">' . $flags[$_id_language] . $languages[$_id_language] . ' <span class="caret"></span></button>
     <ul class="dropdown-menu" role="menu">';
         foreach($languages as $i => $l) {
             $content .= '<li><a href="' . $i . '">' . $flags[$i] . $l . '</a></li>';
@@ -61,9 +81,45 @@ class Page
     }
 
 
-    protected function getCategoryDropDown($_id_category)
+    protected function getCategoryDropDown($_id_category, $_id, $_need_null)
     {
-        return '';
+        $template = '
+                <div class="form-group">
+                    <div id="[+id+]" class="input-group">
+                        <input type="text" class="form-control" readonly="readonly" placeholder="@string:placeholder_category" data-value="[+category_id+]" value="[+category_name+]">
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"> <span class="caret"></span></button>
+                            <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                                [+items+]
+                            </ul>
+                        </div><!-- /btn-group -->
+                    </div><!-- /input-group -->
+                </div><!-- /form-group -->';
+
+        $result = sqlGetCategoryList();
+        if($result['code'] == 0) {
+            $categories = $result['categories'];
+
+            if(isset($categories[$_id_category])) {
+                $category_name = $categories[$_id_category];
+            }
+            else {
+                $category_name = ($_need_null) ? '@string:all_words' : '';
+            }
+
+            $template = str_replace('[+id+]', $_id, $template);
+            $template = str_replace('[+category_id+]', $_id_category, $template);
+            $template = str_replace('[+category_name+]', $category_name, $template);
+
+            $items = ($_need_null) ? '<li><a href="0">@string:all_words</a></li>' : '';
+            foreach($categories as $id => $category) {
+                $items .= '<li><a href="' . $id . '">' . $category . '</a></li>';
+            }
+            $content = str_replace('[+items+]', $items, $template);
+        }
+
+
+        return $content;
     }
 
 
@@ -72,8 +128,7 @@ class Page
         if($translation == null)
             return "";
 
-        $content = '
-                    <ul class="list-group">';
+        $content = '<ul class="list-group">';
         foreach($translation as $id => $t) {
             switch($t['id_language']) {
                 case '1':
@@ -88,8 +143,7 @@ class Page
             }
             $content .= '<li class="list-group-item">' . $img . '<a href="index.php?view=config&id=' . $t['id'] . '">' . $t['word'] . '</a></li>';
         }
-        $content .= '
-                    </ul>';
+        $content .= '</ul>';
 
         return $content;
     }

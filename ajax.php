@@ -9,7 +9,7 @@ $mysqli = connectDB($db_host, $db_user, $db_pass, $db_base);
 
 switch($command) {
     case 'getRandomWord':
-        $content = sqlGetRandomWord($mysqli, $_REQUEST['idLanguage']);
+        $content = sqlGetRandomWord($mysqli, $_REQUEST['language_id'], $_REQUEST['category_id']);
         break;
 
     case 'getWord':
@@ -40,6 +40,26 @@ switch($command) {
 
     case 'importWords':
         $content = sqlImportWords($_REQUEST['data'], $_REQUEST['idLanguage'], $_REQUEST['idCategory']);
+        break;
+
+    case 'addCategory':
+        $content = sqlAddCategory($_REQUEST['category_name']);
+        break;
+    case 'saveCategory':
+        $content = sqlEditCategory($_REQUEST['category_id'], $_REQUEST['category_name']);
+        break;
+    case 'deleteCategory':
+        $content = sqlDeleteCategory($_REQUEST['category_id']);
+        break;
+
+    case 'assignWordToCategory':
+        $content = sqlAssignWordToCategory($_REQUEST['word_id'], $_REQUEST['category_id']);
+        break;
+    case 'deleteWordFromCategory':
+        $content = sqlDeleteWordFromCategory($_REQUEST['word_id'], $_REQUEST['category_id']);
+        break;
+    case 'getCategoryAssignments':
+        $content = sqlGetCategoryAssignments($_REQUEST['category_id']);
         break;
 }
 

@@ -9,17 +9,17 @@ function alertResult(_code, _message, _message_opt) {
             if(_message.length == 0)
                 alert_message = "Operation succeeded";
             else
-                alert_message = _message;
+                alert_message = _message + ((_message_opt != undefined) ? '<br />' + _message_opt : '');
             break;
         case 1:
             alert_class = "danger";
             alert_title = "Ошибка!";
-            alert_message = _message + _message_opt;
+            alert_message = _message + ((_message_opt != undefined) ? '<br />' + _message_opt : '');
             break;
         default:
             alert_class = "warning";
             alert_title = "Предупреждение!";
-            alert_message = _message + _message_opt;
+            alert_message = _message + ((_message_opt != undefined) ? '<br />' + _message_opt : '');
             break;
     }
 

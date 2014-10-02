@@ -35,6 +35,7 @@ $(document).ready(function() {
         else {
             console.log("Автоподсказка ищет: " + search_text);
             if(search_input.attr('data').length > 0) {
+                return true;
                 //console.log("прыг на : " + search_input.attr('data'));
 //                document.location.href = search_input.attr('data');
             }

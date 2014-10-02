@@ -1,14 +1,34 @@
 $(document).ready(function() {
     "use strict";
-//    $("#buttonNext").click()
-//    updateCardFromCookie();
+
+    $('#selectCategory .dropdown-menu a').click(function(e) {
+        e.preventDefault();
+        var category_id = $(this).attr('href');
+        var text = $(this).html();
+        var i = $(this).parents('.input-group').children('input');
+        i.val(text).attr('data', category_id);
+
+        return true;
+    });
+
+    $('#selectMainLanguage .dropdown-menu a').click(function(e) {
+        e.preventDefault();
+        var v = $(this).attr('href');
+        var t = $(this).html();
+        var b = $(this).parents('.btn-group').children('button');
+        b.html(t + ' <span class="caret"></span>').attr('data', v).click();
+        $("#buttonNext").click();
+        return false;
+    });
+
 
     $("#buttonNext").click(function() {
 
-        $("#translation").slideUp("fast");
+        //$("#translation").slideUp("fast");
         $('#buttonPrevious').prop('disabled', false);
 
-        var idLanguage = $('#selectMainLanguage').attr('data-value') + '';
+        var language_id = getLanguageId();
+        var category_id = getCategoryId();
 
         var stack = getStack();
 
@@ -19,9 +39,9 @@ $(document).ready(function() {
 
         if(old_current_index == stack.last_index) {
             stack.last_index = stack.current_index
-            var data = {command: "getRandomWord", idLanguage: idLanguage};
+            var data = {command: "getRandomWord", language_id: language_id, category_id: category_id};
         } else {
-            var data = {command: "getWord", id: stack.ids[stack.current_index]};
+            var data = {command: "getWord", id: stack.ids[stack.current_index], flag: 1};
         }
         saveStack(stack);
 
@@ -70,7 +90,7 @@ $(document).ready(function() {
         $.ajax({
             type: 'POST',
             url: 'ajax.php',
-            data: {command: "getWord", id: stack.ids[stack.current_index]},
+            data: {command: "getWord", id: stack.ids[stack.current_index], flag: 1},
             success: function(data) {
                 console.log('data: ' + data);
 
@@ -96,17 +116,6 @@ $(document).ready(function() {
         }
 
         saveStack(stack);
-        return false;
-    });
-
-    $('.dropdown-menu a').click(function(e) {
-        e.preventDefault();
-        var v = $(this).attr('href');
-        var t = $(this).html();
-        var b = $(this).parents('.btn-group').children('button');
-        b.html(t + ' <span class="caret"></span>').attr('data-value', v).click();
-        $("#buttonNext").click();
-//        console.log(b);
         return false;
     });
 
@@ -167,4 +176,12 @@ function createStack() {
 function saveStack(_stack) {
     if(_stack != null)
         bake_cookie("memorizer_stack", _stack);
+}
+
+function getCategoryId() {
+    return $('#selectCategory').find('input').attr('data');
+}
+
+function getLanguageId() {
+    return $('#selectMainLanguage').find('button').attr('data');
 }

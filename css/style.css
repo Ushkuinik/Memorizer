@@ -86,21 +86,12 @@ p, h1, h2, h3, a {
     font-weight: normal;
 }
 
-#selectMainLanguage2 {
-    min-width: 126px;
-    width: 126px;
-}
-
 .suggestEmphasis {
     color: #428bca;
 }
 
 .undefined_resource {
     color: #ff0000;
-}
-
-#formSearchWordFrom {
-    margin-top: 20px;
 }
 
 .structure {
@@ -112,11 +103,17 @@ p, h1, h2, h3, a {
 }
 
 img.flag {
-    height: 24px;
+    height: 20px;
     margin-right: 5px;
 }
 
 .centered {
     float: none;
     margin: 0 auto;
+}
+
+.clickable {
+    color: #428bca; /*@brand-primary;*/
+    text-decoration: underline;
+    cursor: pointer; cursor: hand;
 }

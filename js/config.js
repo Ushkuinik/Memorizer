@@ -17,7 +17,7 @@ $(document).ready(function() {
         var word = $('#inputWord1').val() + '';
         var structure = $('#inputStructure1').val() + '';
         var brief = $('#inputBrief1').val() + '';
-        var idLanguage = $('#selectLanguage1').attr('data-value') + '';
+        var idLanguage = getLanguageId('1');// $('#selectLanguage1').attr('data-value') + '';
 //        var idPartOfSpeech = $('#selectPartOfSpeech1').attr('data-value') + '';
 
         $.ajax({
@@ -52,7 +52,7 @@ $(document).ready(function() {
         var word = $('#inputWord1').val() + '';
         var structure = $('#inputStructure1').val() + '';
         var brief = $('#inputBrief1').val() + '';
-        var idLanguage = $('#selectLanguage1').attr('data-value') + '';
+        var idLanguage = getLanguageId('1'); //$('#selectLanguage1').attr('data-value') + '';
 //        var idPartOfSpeech = $('#selectPartOfSpeech1').attr('data-value') + '';
 
         $.ajax({
@@ -65,6 +65,10 @@ $(document).ready(function() {
                 var object = jQuery.parseJSON(data);
                 var message = alertResult(object.code, object.message, object.sql);
                 $('#result').html(message);
+                if(parseInt(object.code) == 0) {
+                    setWordId('1', id);
+                    switchToEditMode('1', id)
+                }
             },
             error: function(request, status, error) {
                 alert(request.responseText);
@@ -120,7 +124,7 @@ $(document).ready(function() {
         var word = $('#inputWord2').val() + '';
         var structure = $('#inputStructure2').val() + '';
         var brief = $('#inputBrief2').val() + '';
-        var idLanguage = $('#selectLanguage2').attr('data-value') + '';
+        var idLanguage = getLanguageId('2'); //$('#selectLanguage2').attr('data-value') + '';
 //        var idPartOfSpeech = $('#selectPartOfSpeech1').attr('data-value') + '';
 
         $.ajax({
@@ -155,7 +159,7 @@ $(document).ready(function() {
         var word = $('#inputWord2').val() + '';
         var structure = $('#inputStructure2').val() + '';
         var brief = $('#inputBrief2').val() + '';
-        var idLanguage = $('#selectLanguage2').attr('data-value') + '';
+        var idLanguage = getLanguageId('2'); //$('#selectLanguage2').attr('data-value') + '';
 //        var idPartOfSpeech = $('#selectPartOfSpeech1').attr('data-value') + '';
 
         $.ajax({
@@ -169,6 +173,10 @@ $(document).ready(function() {
                 var message = alertResult(object.code, object.message, object.sql);
 
                 $('#result').html(message);
+                if(parseInt(object.code) == 0) {
+                    setWordId('2', id);
+                    switchToEditMode('2', id)
+                }
             },
             error: function(request, status, error) {
                 alert(request.responseText);
@@ -224,9 +232,7 @@ $(document).ready(function() {
         var v = $(this).attr('href');
         var t = $(this).html();
         var b = $(this).parents('.btn-group').children('button');
-        b.html(t + ' <span class="caret"></span>').attr('data-value', v).click();
-        $("#buttonNext").click();
-//        console.log(b);
+        b.html(t + ' <span class="caret"></span>').attr('data', v).click();
         return false;
     });
 
@@ -329,8 +335,8 @@ $(document).ready(function() {
 
                         var title = $('#selectLanguage1').parent().find('li a[href="' + word.id_language + '"]').html();
                         if(title.length > 0) {
-                            $('#selectLanguage1').html(title);
-                            $('#selectLanguage1').attr('data-value', word.id_language);
+                            $('#selectLanguage1').find('button').html(title);
+                            setLanguageId('1', word.id_language); //$('#selectLanguage1').attr('data-value', word.id_language);
                         }
 
                         switchToEditMode('1', id);
@@ -394,8 +400,8 @@ $(document).ready(function() {
 
                         var title = $('#selectLanguage2').parent().find('li a[href="' + word.id_language + '"]').html();
                         if(title.length > 0) {
-                            $('#selectLanguage2').html(title);
-                            $('#selectLanguage2').attr('data-value', word.id_language);
+                            $('#selectLanguage2').find('button').html(title);
+                            setLanguageId('2', word.id_language); //$('#selectLanguage2').attr('data-value', word.id_language);
                         }
                     }
                     switchToEditMode('2', id);
@@ -459,8 +465,10 @@ $(document).ready(function() {
                 $('#result').html(message);
                 if(parseInt(object.code) == 0) {
                     $('#searchWord1').submit()
-                    $('#buttonLinkWords').fadeOut('fast');
-                    $('#buttonUnlinkWords').fadeIn('fast');
+                    $('#searchWord2').submit()
+                    $('#buttonLinkWords').fadeOut('fast', function() {
+                        $('#buttonUnlinkWords').fadeIn('fast');
+                    });
                 }
             },
             error: function(request, status, error) {
@@ -488,8 +496,10 @@ $(document).ready(function() {
                 $('#result').html(message);
                 if(parseInt(object.code) == 0) {
                     $('#searchWord1').submit()
-                    $('#buttonLinkWords').fadeIn('fast');
-                    $('#buttonUnlinkWords').fadeOut('fast');
+                    $('#searchWord2').submit()
+                    $('#buttonUnlinkWords').fadeOut('fast', function() {
+                        $('#buttonLinkWords').fadeIn('fast');
+                    });
                 }
             },
             error: function(request, status, error) {
@@ -500,15 +510,17 @@ $(document).ready(function() {
         return false;
     });
 
-    $('#wordCard1').delegate('.translation', 'click', function() {
+    $('#wordCard1').on('click', '.translation', function() {
         setWordId('2', $(this).attr('data')).val($(this).text());
         $('#searchWord2').submit();
     });
 
-    $('#wordCard2').delegate('.translation', 'click', function() {
+    $('#wordCard2').on('click', '.translation', function() {
         setWordId('1', $(this).attr('data')).val($(this).text());
         $('#searchWord1').submit();
     });
+
+    checkIdsInCookies();
 });
 
 function getTranslation(_id) {
@@ -524,15 +536,25 @@ function getTranslation(_id) {
 };
 
 function setWordId(_group, _id) {
-    var search = '#searchWord' + _group;
-    var control = $(search).find('input.search-input');
+    var selector = '#searchWord' + _group;
+    var control = $(selector).find('input.search-input');
     control.attr('data', _id);
     return control;
 }
 
 function getWordId(_group) {
-    var search = '#searchWord' + _group;
-    return $(search).find('input.search-input').attr('data');
+    var selector = '#searchWord' + _group;
+    return $(selector).find('input.search-input').attr('data');
+}
+
+function setLanguageId(_group, _id) {
+    var selector = '#selectLanguage' + _group;
+    return $(selector).find('button').attr('data', _id);
+}
+
+function getLanguageId(_group) {
+    var selector = '#selectLanguage' + _group;
+    return $(selector).find('button').attr('data');
 }
 
 function switchToEditMode(_group, _id) {
@@ -549,8 +571,11 @@ function switchToEditMode(_group, _id) {
         var id1 = getWordId('1');
         var id2 = getWordId('2');
         if((id1.length > 0) && (id2.length > 0) && (id1 != id2)) {
-            if($('#selectLanguage1').attr('data-value') == $('#selectLanguage2').attr('data-value')) {
+            //if($('#selectLanguage1').attr('data-value') == $('#selectLanguage2').attr('data-value')) {
+            if(getLanguageId('1') == getLanguageId('2')) {
                 //synonims
+                $('#buttonLinkWords').fadeOut('fast');
+                $('#buttonUnlinkWords').fadeOut('fast');
             }
             else {
                 if(getTranslation(id2)) {
@@ -579,7 +604,7 @@ function createWordCard(_word) {
         '<ul>' +
         '[+translations+]' +
         '</ul>';
-    template_translation = '<li class="translation" data="[+id+]">[+translation+]</li>';
+    template_translation = '<li class="translation clickable" data="[+id+]">[+translation+]</li>';
 
     var translations = '';
     for(t in translation) {
@@ -589,6 +614,8 @@ function createWordCard(_word) {
     }
     result = template_card;
     result = result.replace('[+word+]', _word.word);
+    if(_word.brief == null)
+        _word.brief = "";
     result = result.replace('[+brief+]', _word.brief);
     result = result.replace('[+translations+]', translations);
 
@@ -599,4 +626,18 @@ function createWordCard(_word) {
     result += '</ul>';
 */
     return result;
+}
+
+function checkIdsInCookies() {
+    var ids = read_cookie('memorizer_ids');
+    if(ids != null) {
+        var id = ids['id'];
+        setWordId('1', id).val(ids['word']).delay(1000, function() {
+            $('#searchWord1').submit();
+        });
+
+        delete ids['id'];
+        delete ids['word'];
+        bake_cookie('memorizer_ids', ids);
+    }
 }
