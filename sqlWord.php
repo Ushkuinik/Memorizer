@@ -826,24 +826,63 @@ function sqlGetCategoryAssignments($_category_id) {
         $result['message'] = "Invalid id: [" . $_category_id . ']';
         return $result;
     }
-    $result['sql'] = "
+
+    if($_category_id > 0)
+        $result['sql'] = "
+            SELECT
+                w1.id   as word_id1,
+                w1.word as word1,
+                w2.id   as word_id2,
+                w2.word as word2
+            FROM category_word cw
+            LEFT JOIN word w1     ON w1.id=cw.word_id
+            LEFT JOIN translate t ON t.id_word_from=cw.word_id
+            LEFT JOIN word w2     ON w2.id=t.id_word_to
+            WHERE cw.category_id=$category_id";
+    elseif($_category_id == -1)
+        $result['sql'] = "
         SELECT
-            cw.id  as id,
-            w.id   as word_id,
-            w.word as word
-        FROM category_word cw
-        LEFT JOIN word w ON cw.word_id=w.id
-        WHERE cw.category_id=$category_id";
+            w1.id   as word_id1,
+            w1.word as word1,
+            w2.id   as word_id2,
+            w2.word as word2
+        FROM word w1
+        LEFT JOIN translate t ON t.id_word_from=w1.id
+        LEFT JOIN word w2     ON w2.id=t.id_word_to
+        WHERE w1.id NOT IN (
+            SELECT word.id
+            FROM word
+            INNER JOIN category_word
+            ON word.id = category_word.word_id);";
+    elseif($_category_id == -2)
+        $result['sql'] = "
+        SELECT
+            w1.id   as word_id1,
+            w1.word as word1
+        FROM word w1
+        LEFT JOIN translate t ON t.id_word_from=w1.id
+        LEFT JOIN word w2     ON w2.id=t.id_word_to
+        WHERE w1.id NOT IN (
+            SELECT word.id
+            FROM word
+            INNER JOIN translate
+            ON word.id = translate.id_word_from);";
 
     $sql_result        = $mysqli->query($result['sql']);
     $result['code']    = ($sql_result) ? 0 : 1;
-    $result['message'] = ($result['code'] == 0) ? "Added assignment" : "Failed to assign word to category";
+    $result['message'] = ($result['code'] == 0) ? '' : 'Failed to make sql request';
     if(($sql_result) && ($sql_result->num_rows > 0)) {
         while($object = $sql_result->fetch_object()) {
-            $word['id']   = $object->word_id;
-            $word['word'] = $object->word;
+            $id   = $object->word_id1;
+            $word = $object->word1;
+            $translation_id   = $object->word_id2;
+            $translation_word = $object->word2;
 
-            $result['words'][$object->id] = $word;
+            if(!isset($result['words'][$id]))
+                $result['words'][$id]['word'] = $word;
+
+            if($translation_id > 0)
+                $result['words'][$id]['translations'][$translation_id] =  $translation_word;
         }
     }
 
@@ -938,6 +977,46 @@ function sqlGetAssignment($_mysqli, $_word_id, $_category_id) {
     if($result['code'] == 0)
         if($object = $sql_result->fetch_object())
             $result['assignment_id'] = $object->id;
+
+    return $result;
+}
+
+
+function sqlGetWordsWithoutCategory() {
+    global $mysqli;
+
+    $result['sql'] = "
+        SELECT
+            w1.id,
+            w1.word,
+            w2.id,
+            w2.word
+        FROM word w1
+        LEFT JOIN translate t ON t.id_word_from=w1.word_id
+        LEFT JOIN word w2     ON w2.id=t.id_word_to
+        WHERE w1.id NOT IN (
+            SELECT word.id
+            FROM word
+            INNER JOIN category_word
+            ON word.id = category_word.word_id);";
+
+    $sql_result        = $mysqli->query($result['sql']);
+    $result['code']    = ($sql_result) ? 0 : 1;
+    $result['message'] = ($result['code'] == 0) ? '' : 'Failed to make sql request';
+    if(($sql_result) && ($sql_result->num_rows > 0)) {
+        while($object = $sql_result->fetch_object()) {
+            $id   = $object->word_id1;
+            $word = $object->word1;
+            $translation_id   = $object->word_id2;
+            $translation_word = $object->word2;
+
+            if(!isset($result['words'][$id]))
+                $result['words'][$id]['word'] = $word;
+
+            if($translation_id > 0)
+                $result['words'][$id]['translations'][$translation_id] =  $translation_word;
+        }
+    }
 
     return $result;
 }

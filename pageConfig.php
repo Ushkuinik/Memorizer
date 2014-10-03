@@ -51,74 +51,15 @@ class pageConfig extends Page
 
         $id2 = $_SESSION['id2'];
 
-/*        if(is_numeric($id)) {
-            $result = sqlGetWord($mysqli, $id, true);
-            if($result['code'] == 0) {
-                $details           = $result['word'];
-                //$id                = $details['id'];
-                $word              = $details['word'];
-                $structure         = $details['structure'];
-                $brief             = $details['brief'];
-                $id_language       = $details['id_language'];
-                $id_part_of_speech = $details['id_part_of_speech'];
-                $translation       = $details['translation'];
-
-                $content = '
-    <div class="col-sm-6 col-md-6 col-lg-6">
-        <button type="button" id="buttonNewWord" class="btn btn-primary btn-lg">@string:button_new_word</button>
-        <h1>' . $this->getDecoratedWord($structure) . '</h1>
-        <hr />
-        <form role="form">
-            <label for="selectMainLanguage">@string:label_language</label>
-            <div class="form-group">' .
-                    $this->getLanguageDropDown($id_language, 'selectMainLanguage') . '
-            </div>
-            <div class="form-group">
-                <label for="inputWord1">@string:label_word</label>
-                <input id="inputWord1" class="form-control" type="text" placeholder="@string:placeholder_word1" value="' . $word . '"></p>
-            </div>
-            <div class="form-group">
-                <label for="inputStructure1">@string:label_structure</label>
-                <input id="inputStructure1" class="form-control" type="text" placeholder="@string:placeholder_structure" value="' . $structure . '"></p>
-            </div>
-            <div class="form-group">
-                <label for="inputStructure1">@string:label_brief</label>
-                <input id="inputBrief1" class="form-control" type="text" placeholder="@string:placeholder_brief" value="' . $brief . '"></p>
-            </div>
-            <button id="buttonSaveWord1" type="submit" class="btn btn-primary">@string:button_save_word</button>
-            <button id="buttonDeleteWord1" type="submit" class="btn btn-warning">@string:button_delete_word</button>
-        </form>
-    </div>
-
-    <div class="col-sm-6 col-md-6 col-lg-6">
-        <label for="listTranslation">@string:label_translation</label>' .
-                    $this->getTranslationDropDown($translation) . '
-        <form id="searchTranslation" class="form-search" role="search" autocomplete="off">
-            <div class="input-group">
-                <input type="text" class="form-control search-input" placeholder="@string:placeholder_search_translation@" value="" data="">
-                <ul class="dropdown-menu search-suggest"></ul>
-
-                <span class="input-group-btn">
-                    <button type="submit" class="btn"><span class="glyphicon glyphicon-plus"></span></button>
-                </span>
-            </div>
-        </form>
-    </div>';
-            } else {
-                $content = $result['message'];
-            }
-        }
-*/
-
         $content = '
-<div class="col-sm-6 col-md-6 col-lg-6">' .
-    $this->getSearchComboBox("searchWord1", "@string:placeholder_search_word1", $id1, $word1['word']) . '
+<div class="col-sm-6 col-md-6 col-lg-6">
+' . $this->getSearchComboBox("searchWord1", "@string:placeholder_search_word1", $id1, $word1['word']) . '
     <div id="wordCard1" class="wordCard"></div>
     <hr />
     <form role="form">
         <label for="selectLanguage1">@string:label_language</label>
-        <div class="form-group">' .
-            $this->getLanguageDropDown($word1['id_language'], 'selectLanguage1') . '
+        <div class="form-group">
+        ' . $this->getLanguageDropDown($word1['id_language'], 'selectLanguage1') . '
         </div>
         <div class="form-group">
             <label for="inputWord1">@string:label_word</label>
@@ -138,14 +79,14 @@ class pageConfig extends Page
     </form>
 </div>
 
-<div class="col-sm-6 col-md-6 col-lg-6">' .
-    $this->getSearchComboBox("searchWord2", "@string:placeholder_search_word2", $id2, '') . '
+<div class="col-sm-6 col-md-6 col-lg-6">
+' . $this->getSearchComboBox("searchWord2", "@string:placeholder_search_word2", $id2, '') . '
     <div id="wordCard2" class="wordCard"></div>
     <hr />
     <form role="form">
         <label for="selectLanguage2">@string:label_language</label>
-        <div class="form-group">' .
-            $this->getLanguageDropDown(0, 'selectLanguage2') . '
+        <div class="form-group">
+        ' . $this->getLanguageDropDown(0, 'selectLanguage2') . '
         </div>
         <div class="form-group">
             <label for="inputWord2">@string:label_word</label>
@@ -170,8 +111,7 @@ class pageConfig extends Page
         <button id="buttonLinkWords" class="btn btn-primary btn-block"><span class="glyphicon glyphicon-resize-small"></span>&nbsp;&nbsp;@string:button_link_words</button>
         <button id="buttonUnlinkWords" class="btn btn-danger pull-right btn-block"><span class="glyphicon glyphicon-resize-full"></span>&nbsp;&nbsp;@string:button_unlink_words</button>
     </div>
-</div>
-';
+</div>';
 
         return $content;
     }

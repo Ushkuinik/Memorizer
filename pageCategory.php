@@ -28,7 +28,7 @@ class pageCategory extends Page
                 <p><button id="buttonAddCategory" class="btn btn-primary" data-toggle="modal" data-target="#modalAddCategory"><span class="glyphicon glyphicon-plus"></span>&nbsp;&nbsp;@string:button_add_category</button></p>
             </div>
             <div class="col-sm-8 col-md-8 col-lg-8">
-                ' . $this->getCategoryDropDown(0, 'selectCategory', false) . '
+                ' . $this->getCategoryDropDownWithExtra(0, 'selectCategory') . '
             </div>
             <div class="col-sm-4 col-md-4 col-lg-4">
                 <button id="buttonRenameCategory" class="btn btn-success" data-toggle="modal" data-target="#modalRenameCategory"><span class="glyphicon glyphicon-edit"></span>&nbsp;&nbsp;@string:button_rename_category</button>
@@ -47,7 +47,9 @@ class pageCategory extends Page
                 <table id="tableList" class="table">
                     <thead>
                         <tr>
-                            <td>@string:table_header_word</td><td>@string:table_header_action</td>
+                            <td>@string:table_header_word</td>
+                            <td>@string:table_header_translate</td>
+                            <td>@string:table_header_action</td>
                         </tr>
                     </thead>
                     <tbody class="table-hover">

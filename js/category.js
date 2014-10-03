@@ -42,7 +42,7 @@ $(document).ready(function() {
 //                        var action = $('p.action-delete-from-category').html();
 //                        action = action.replace('[+word_id+]', word_id);
 //                        var row = '<tr><td>' + word + '</td><td>' + action + '</td></tr>';
-                        var row = createRow(word_id, word);
+                        var row = createRow(word_id, word, null);
                         $('#tableList tr:last').after(row);
                      }
                 },
@@ -293,10 +293,30 @@ function clearTable() {
     $('#tableList tbody').html('');
 }
 
-function createRow(_id, word) {
-    var action = $('p.action-delete-from-category').html();
-    action = action.replace('[+word_id+]', _id);
-    return '<tr><td><a href="index.php?view=config&id1=' + _id + '">' + word + '</a></td><td>' + action + '</td></tr>';
+function createRow(_id, _word, _translations) {
+    var word = '<a href="index.php?view=config&id1=' + _id + '">' + _word + '</a>';
+
+    //var count = Object.keys(_translations).length;
+    var translations = '';
+    for(t in _translations) {
+        if(translations.length > 0)
+            translations += ', '
+        translations += '<a href="index.php?view=config&id1=' + t + '">' + _translations[t] + '</a>'
+    }
+
+    if(getCategoryId() > 0) {
+        var action = $('p.action-delete-from-category').html();
+        action = action.replace('[+word_id+]', _id);
+    } else
+        var action = '';
+
+
+    var template = '<tr><td>[+word+]</td><td>[+translation+]</td><td>[+action+]</td></tr>';
+    var result = template.replace('[+word+]', word);
+    var result = result.replace('[+translation+]', translations);
+    var result = result.replace('[+action+]', action);
+    return result;
+    //return '<tr><td><a href="index.php?view=config&id1=' + _id + '">' + _word + '</a></td><td>' + action + '</td></tr>';
     //return '<tr><td><span class="clickable">' + word + '</span></td><td>' + action + '</td></tr>';
 }
 
@@ -316,10 +336,10 @@ function ajaxGetCategoryAssignments(_category_id) {
                 var words = object.words;
                 clearTable()
                 if(words != undefined) {
-                    for(var i in words) {
-                        var id = words[i].id;
-                        var word = words[i].word;
-                        var row = createRow(id, word);
+                    for(var id in words) {
+                        var word = words[id].word;
+                        var translations = words[id].translations;
+                        var row = createRow(id, word, translations);
                         $('#tableList tbody').append(row);
                     }
                     var length = Object.keys(words).length;

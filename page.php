@@ -117,8 +117,47 @@ class Page
             }
             $content = str_replace('[+items+]', $items, $template);
         }
+        return $content;
+    }
 
 
+    protected function getCategoryDropDownWithExtra($_id_category, $_id)
+    {
+        $template = '
+                <div class="form-group">
+                    <div id="[+id+]" class="input-group">
+                        <input type="text" class="form-control" readonly="readonly" placeholder="@string:placeholder_category" data-value="[+category_id+]" value="[+category_name+]">
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"> <span class="caret"></span></button>
+                            <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                                [+items+]
+                            </ul>
+                        </div><!-- /btn-group -->
+                    </div><!-- /input-group -->
+                </div><!-- /form-group -->';
+
+        $result = sqlGetCategoryList();
+        if($result['code'] == 0) {
+            $categories = $result['categories'];
+
+            if(isset($categories[$_id_category])) {
+                $category_name = $categories[$_id_category];
+            }
+            else {
+                $category_name = '';
+            }
+
+            $template = str_replace('[+id+]', $_id, $template);
+            $template = str_replace('[+category_id+]', $_id_category, $template);
+            $template = str_replace('[+category_name+]', $category_name, $template);
+
+            $items = '<li><a href="-2">Слова без перевода</a></li>';
+            $items .= '<li><a href="-1">Слова без категории</a></li>';
+            foreach($categories as $id => $category) {
+                $items .= '<li><a href="' . $id . '">' . $category . '</a></li>';
+            }
+            $content = str_replace('[+items+]', $items, $template);
+        }
         return $content;
     }
 
