@@ -18,27 +18,29 @@ USE `memorizer`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `language`
+-- Table structure for table `category_word`
 --
 
-DROP TABLE IF EXISTS `language`;
+DROP TABLE IF EXISTS `category_word`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `language` (
-  `id` int(11) unsigned NOT NULL,
-  `code` varchar(5) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE `category_word` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `category_id` int(10) unsigned NOT NULL,
+  `word_id` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=122 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `language`
+-- Dumping data for table `category_word`
 --
 
-LOCK TABLES `language` WRITE;
-/*!40000 ALTER TABLE `language` DISABLE KEYS */;
-INSERT INTO `language` VALUES (1,'RU'),(2,'EN'),(3,'JP');
-/*!40000 ALTER TABLE `language` ENABLE KEYS */;
+LOCK TABLES `category_word` WRITE;
+/*!40000 ALTER TABLE `category_word` DISABLE KEYS */;
+INSERT INTO `category_word` VALUES (32,1,101),(33,1,94),(34,1,78),(35,1,84),(36,1,80),(37,1,86),(38,1,87),(39,1,89),(40,1,81),(41,1,91),(42,1,96),(43,1,141),(44,1,98),(45,1,77),(46,1,129),(47,1,136),(48,1,142),(49,1,146),(50,3,15),(60,3,33),(69,1,192),(71,16,194),(72,16,195),(73,16,196),(74,16,197),(75,16,198),(76,16,199),(77,16,200),(78,16,201),(79,16,202),(80,16,203),(81,16,204),(82,16,205),(83,16,206),(84,16,207),(85,16,208),(86,16,209),(87,16,210),(88,16,211),(89,16,212),(90,16,213),(91,16,214),(92,16,215),(93,16,216),(94,16,217),(95,16,218),(96,16,219),(97,16,193),(98,16,251),(100,3,65),(101,17,253),(102,17,254),(103,17,255),(104,17,256),(105,17,257),(106,17,258),(107,17,259),(108,17,260),(109,17,261),(110,17,262),(111,17,263),(112,17,264),(113,17,265),(114,17,266),(115,17,267),(116,17,268),(117,17,269),(119,17,271),(120,17,272),(121,17,270);
+/*!40000 ALTER TABLE `category_word` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

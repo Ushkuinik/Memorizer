@@ -32,7 +32,7 @@ CREATE TABLE `brief` (
   UNIQUE KEY `id_UNIQUE` (`id`),
   KEY `id_word_idx` (`id_word`),
   CONSTRAINT `id_word` FOREIGN KEY (`id_word`) REFERENCES `word` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,7 +41,7 @@ CREATE TABLE `brief` (
 
 LOCK TABLES `brief` WRITE;
 /*!40000 ALTER TABLE `brief` DISABLE KEYS */;
-INSERT INTO `brief` VALUES (1,1,'транспортное средство'),(2,2,'a vehicle'),(3,9,'оборонительное сооружение'),(4,10,'запорное устройство'),(5,11,'a security mechanism'),(6,14,'a fortification construction');
+INSERT INTO `brief` VALUES (1,1,'транспортное средство'),(2,2,'a vehicle'),(3,9,'оборонительное сооружение'),(4,10,'запорное устройство'),(5,11,'a security mechanism'),(6,14,'a fortification construction'),(12,49,'устройство для отпирания замка'),(13,50,'родник'),(15,80,'Четвертая планета Солнечной системы'),(16,81,'Восьмая планета Солнечной системы'),(17,78,'Первая планета Солнечной системы'),(18,84,'Вторая планета Солнечной системы'),(19,94,'Третья планета Соленчной системы'),(20,86,'Пятая планета Солнечной системы'),(21,87,'Шестая планета Соленчной системы'),(22,89,'Седьмая планета солнечной системы'),(23,91,'карликовая планета Солнечной системы'),(24,102,'спутник Земли'),(26,141,'галактика Млечный Путь');
 /*!40000 ALTER TABLE `brief` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -54,4 +54,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-08-01 17:09:52
+-- Dump completed on 2014-10-03 11:07:07

@@ -520,7 +520,11 @@ $(document).ready(function() {
         $('#searchWord1').submit();
     });
 
-    checkIdsInCookies();
+    //checkIdsInCookies();
+    if((getWordId('1') > 0) && ($('#searchWord1').find('input.search-input').val().length > 0))
+        $('#searchWord1').submit();
+    if((getWordId('2') > 0) && ($('#searchWord2').find('input.search-input').val().length > 0))
+        $('#searchWord2').submit();
 });
 
 function getTranslation(_id) {
@@ -632,12 +636,14 @@ function checkIdsInCookies() {
     var ids = read_cookie('memorizer_ids');
     if(ids != null) {
         var id = ids['id'];
-        setWordId('1', id).val(ids['word']).delay(1000, function() {
-            $('#searchWord1').submit();
-        });
+        if(id > 0) {
+            setWordId('1', id).val(ids['word']).delay(1000, function() {
+                $('#searchWord1').submit();
+            });
 
-        delete ids['id'];
-        delete ids['word'];
-        bake_cookie('memorizer_ids', ids);
+            delete ids['id'];
+            delete ids['word'];
+            bake_cookie('memorizer_ids', ids);
+        }
     }
 }

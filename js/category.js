@@ -39,9 +39,10 @@ $(document).ready(function() {
                     $('#result').html(message);
                     if(parseInt(object.code) == 0) {
                         var word = getWord();
-                        var action = $('p.action-delete-from-category').html();
-                        action = action.replace('[+word_id+]', word_id);
-                        var row = '<tr><td>' + word + '</td><td>' + action + '</td></tr>';
+//                        var action = $('p.action-delete-from-category').html();
+//                        action = action.replace('[+word_id+]', word_id);
+//                        var row = '<tr><td>' + word + '</td><td>' + action + '</td></tr>';
+                        var row = createRow(word_id, word);
                         $('#tableList tr:last').after(row);
                      }
                 },
@@ -292,6 +293,13 @@ function clearTable() {
     $('#tableList tbody').html('');
 }
 
+function createRow(_id, word) {
+    var action = $('p.action-delete-from-category').html();
+    action = action.replace('[+word_id+]', _id);
+    return '<tr><td><a href="index.php?view=config&id1=' + _id + '">' + word + '</a></td><td>' + action + '</td></tr>';
+    //return '<tr><td><span class="clickable">' + word + '</span></td><td>' + action + '</td></tr>';
+}
+
 function ajaxGetCategoryAssignments(_category_id) {
     $.ajax({
         type: 'POST',
@@ -311,9 +319,7 @@ function ajaxGetCategoryAssignments(_category_id) {
                     for(var i in words) {
                         var id = words[i].id;
                         var word = words[i].word;
-                        var action = $('p.action-delete-from-category').html();
-                        action = action.replace('[+word_id+]', id);
-                        var row = '<tr><td><span class="clickable">' + word + '</span></td><td>' + action + '</td></tr>';
+                        var row = createRow(id, word);
                         $('#tableList tbody').append(row);
                     }
                     var length = Object.keys(words).length;
