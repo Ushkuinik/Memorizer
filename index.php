@@ -15,8 +15,10 @@ try {
     $mysqli = connectDB();
 
     $view = isset($_GET['view']) ? $_GET['view'] : "";
-    $id1   = isset($_GET['id1']) ? $_GET['id1'] : "";
-    $id2   = isset($_GET['id2']) ? $_GET['id2'] : "";
+    $id1   = isset($_POST['id1']) ? $_POST['id1'] : "";
+    $id2   = isset($_POST['id2']) ? $_POST['id2'] : "";
+//    $id1   = isset($_GET['id1']) ? $_GET['id1'] : "";
+//    $id2   = isset($_GET['id2']) ? $_GET['id2'] : "";
 
     $page = null;
     switch($view) {

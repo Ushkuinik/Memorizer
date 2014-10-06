@@ -151,8 +151,8 @@ class Page
             $template = str_replace('[+category_id+]', $_id_category, $template);
             $template = str_replace('[+category_name+]', $category_name, $template);
 
-            $items = '<li><a href="-2">Слова без перевода</a></li>';
-            $items .= '<li><a href="-1">Слова без категории</a></li>';
+            $items = '<li class="special wo-translate"><a href="-2">Слова без перевода</a></li>';
+            $items .= '<li class="special wo-category"><a href="-1">Слова без категории</a></li>';
             foreach($categories as $id => $category) {
                 $items .= '<li><a href="' . $id . '">' . $category . '</a></li>';
             }

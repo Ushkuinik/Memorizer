@@ -65,9 +65,6 @@ body {
     text-align: center;
 }
 
-p, h1, h2, h3, a {
-}
-
 .brief {
     color: #999;
     font-style: italic;
@@ -112,8 +109,6 @@ img.flag {
     margin: 0 auto;
 }
 
-.clickable {
-    color: #428bca; /*@brand-primary;*/
-    text-decoration: underline;
-    cursor: pointer; cursor: hand;
+.special a {
+    background: #faf2cc;
 }

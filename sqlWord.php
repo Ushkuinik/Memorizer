@@ -658,6 +658,11 @@ function sqlImportWords($_data, $_id_language, $_id_category) {
             }
             else {
                 $status_code = 1;    // word already present
+                $status['word']           = word;
+                $status['structure']      = $structure;
+                $status['brief']          = $brief;
+                $status['part_of_speech'] = $part_of_speech;
+                $status['language_id']    = $_id_language;
             }
 
             $status['word'] = $word;
@@ -850,6 +855,11 @@ function sqlGetCategoryAssignments($_category_id) {
         LEFT JOIN translate t ON t.id_word_from=w1.id
         LEFT JOIN word w2     ON w2.id=t.id_word_to
         WHERE w1.id NOT IN (
+            SELECT word.id
+            FROM word
+            INNER JOIN category_word
+            ON word.id = category_word.word_id)
+        AND w2.id NOT IN (
             SELECT word.id
             FROM word
             INNER JOIN category_word

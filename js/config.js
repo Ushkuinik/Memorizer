@@ -307,6 +307,8 @@ $(document).ready(function() {
                 $('#buttonAddWord1').fadeIn('fast');
             });
 
+            setLanguageId('1', detectLanguage(search_text));
+
             return false;
         }
         else {
@@ -333,14 +335,20 @@ $(document).ready(function() {
                         $('#inputStructure1').val(word.structure);
                         $('#inputBrief1').val(word.brief);
 
-                        var title = $('#selectLanguage1').parent().find('li a[href="' + word.id_language + '"]').html();
-                        if(title.length > 0) {
-                            $('#selectLanguage1').find('button').html(title);
-                            setLanguageId('1', word.id_language); //$('#selectLanguage1').attr('data-value', word.id_language);
-                        }
+                        setLanguageId('1', word.id_language); //$('#selectLanguage1').attr('data-value', word.id_language);
 
                         switchToEditMode('1', id);
                         $("#wordCard1").html(createWordCard(word));
+
+                        var min_code = 0xffffffff;
+                        var max_code = 0;
+                        for(var c in word.word) {
+                            if(word.word.charCodeAt(c) > max_code)
+                                max_code = word.word.charCodeAt(c);
+                            if(word.word.charCodeAt(c) < min_code)
+                                min_code = word.word.charCodeAt(c);
+                        }
+                        console.log(min_code.toString(16) + ' - ' + max_code.toString(16));
                     }
                 },
                 error: function(request, status, error) {
@@ -374,6 +382,8 @@ $(document).ready(function() {
                 $('#buttonAddWord2').fadeIn('fast');
             });
 
+            setLanguageId('2', detectLanguage(search_text));
+
             return false;
         }
         else {
@@ -398,11 +408,7 @@ $(document).ready(function() {
                         $('#inputStructure2').val(word.structure);
                         $('#inputBrief2').val(word.brief);
 
-                        var title = $('#selectLanguage2').parent().find('li a[href="' + word.id_language + '"]').html();
-                        if(title.length > 0) {
-                            $('#selectLanguage2').find('button').html(title);
-                            setLanguageId('2', word.id_language); //$('#selectLanguage2').attr('data-value', word.id_language);
-                        }
+                        setLanguageId('2', word.id_language); //$('#selectLanguage2').attr('data-value', word.id_language);
                     }
                     switchToEditMode('2', id);
                     $("#wordCard2").html(createWordCard(word));
@@ -520,7 +526,6 @@ $(document).ready(function() {
         $('#searchWord1').submit();
     });
 
-    //checkIdsInCookies();
     if((getWordId('1') > 0) && ($('#searchWord1').find('input.search-input').val().length > 0))
         $('#searchWord1').submit();
     if((getWordId('2') > 0) && ($('#searchWord2').find('input.search-input').val().length > 0))
@@ -553,7 +558,8 @@ function getWordId(_group) {
 
 function setLanguageId(_group, _id) {
     var selector = '#selectLanguage' + _group;
-    return $(selector).find('button').attr('data', _id);
+    $(selector).find('button').html($(selector).parent().find('li a[href="' + _id + '"]').html());
+    $(selector).find('button').attr('data', _id);
 }
 
 function getLanguageId(_group) {
@@ -577,7 +583,7 @@ function switchToEditMode(_group, _id) {
         if((id1.length > 0) && (id2.length > 0) && (id1 != id2)) {
             //if($('#selectLanguage1').attr('data-value') == $('#selectLanguage2').attr('data-value')) {
             if(getLanguageId('1') == getLanguageId('2')) {
-                //synonims
+                //synonyms
                 $('#buttonLinkWords').fadeOut('fast');
                 $('#buttonUnlinkWords').fadeOut('fast');
             }
@@ -598,6 +604,41 @@ function switchToEditMode(_group, _id) {
 //        $('#buttonUnlinkWords').fadeOut('fast');
     });
 }
+
+function detectLanguage(_word) {
+    var intervals = {
+        1: {min: 0x00000000, max: 0x0000007f},
+        2: {min: 0x00000080, max: 0x000007ff},
+        3: {min: 0x00000800, max: 0x0000ffff},
+        4: {min: 0x00010000, max: 0x001fffff},
+        5: {min: 0x00200000, max: 0x03ffffff},
+        6: {min: 0x04000000, max: 0x7fffffff}
+    }
+    var min_code = 0xffffffff;
+    var max_code = 0;
+    for(var c in _word) {
+        if(_word.charCodeAt(c) > max_code)
+            max_code = _word.charCodeAt(c);
+        if(_word.charCodeAt(c) < min_code)
+            min_code = _word.charCodeAt(c);
+    }
+    console.log(min_code.toString(16) + ' - ' + max_code.toString(16));
+    var interval = 0;
+    for(i in intervals) {
+        if(max_code < intervals[i]['max']) {
+            interval = i;
+            break;
+        }
+    }
+    console.log('interval: ' + interval);
+    switch(parseInt(interval)) {
+        case 1: return 2;
+        case 2: return 1;
+        case 3: return 3;
+        default: return 0;
+    }
+}
+
 
 function createWordCard(_word) {
     var translation = _word.translation;
@@ -630,20 +671,4 @@ function createWordCard(_word) {
     result += '</ul>';
 */
     return result;
-}
-
-function checkIdsInCookies() {
-    var ids = read_cookie('memorizer_ids');
-    if(ids != null) {
-        var id = ids['id'];
-        if(id > 0) {
-            setWordId('1', id).val(ids['word']).delay(1000, function() {
-                $('#searchWord1').submit();
-            });
-
-            delete ids['id'];
-            delete ids['word'];
-            bake_cookie('memorizer_ids', ids);
-        }
-    }
 }

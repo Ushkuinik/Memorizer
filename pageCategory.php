@@ -39,7 +39,7 @@ class pageCategory extends Page
                 ' . $this->getSearchComboBox("searchWord", "@string:placeholder_search_word", 0, '') . '
             </div>
             <div class="col-sm-4 col-md-4 col-lg-4">
-                <button id="buttonAssignWord" class="btn btn-primary btn-block"><span class="glyphicon glyphicon-plus"></span>&nbsp;&nbsp;@string:button_assign_to_catogory</button>
+                <button id="buttonAssignWord" class="btn btn-primary btn-block"><span class="glyphicon glyphicon-plus"></span>&nbsp;&nbsp;@string:button_assign_to_category</button>
             </div>
 
 

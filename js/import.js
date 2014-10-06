@@ -47,9 +47,9 @@ $(document).ready(function() {
 
                     var table;
                     for(var i in status) {
-                        var word = status[i].word;
+                        var id   = status[i].id;
                         var code = status[i].code;
-                        var id = status[i].id;
+                        var word = status[i].word;
                         switch(code) {
                             case 0: // successfully added
                                 code = $('p.status-success').html();
@@ -58,6 +58,11 @@ $(document).ready(function() {
                             case 1: // word already present
                                 code = $('p.status-present').html();
                                 var action = $('p.action-add-synonym').html();
+                                action = action.replace('[+id+]', id);
+                                action = action.replace('[+word+]', word);
+                                action = action.replace('[+structure+]', status[i].structure);
+                                action = action.replace('[+brief+]', status[i].brief);
+                                action = action.replace('[+language_id+]', status[i].language_id);
                                 break;
                             case 2: // error during adding word
                                 code = $('p.status-error').html();
@@ -68,7 +73,8 @@ $(document).ready(function() {
                             default: break;
                         }
                         //var action = status[i].id;
-                        var row = '<tr><td>' + code + '</td><td>' + word + '</td><td>' + id + '</td><td>' + action + '</td></tr>';
+                        word = createWord(id, word);
+                        var row = '<tr><td class="status">' + code + '</td><td class="word">' + word + '</td><td class="id">' + id + '</td><td class="action">' + action + '</td></tr>';
                         table += row;
                     }
                     $('#import2').find('tbody').html(table);
@@ -106,6 +112,50 @@ $(document).ready(function() {
         b.html(t + ' <span class="caret"></span>').attr('data-value', v).click();
         return false;
     });
+
+
+    $('#tableList').on('click', 'button.add-synonym', function() {
+        var word        = $(this).attr('word');
+        var structure   = $(this).attr('structure');
+        var brief       = $(this).attr('brief');
+        var language_id = $(this).attr('language_id');
+        var tr          = $(this).parents('tr');
+
+        $.ajax({
+            type: 'POST',
+            url: 'ajax.php',
+            data: {command: "addWord", word: word, structure: structure, brief: brief, idLanguage: language_id, idPartOfSpeech: "1"},
+            success: function(data) {
+                console.log(data);
+
+                var object = jQuery.parseJSON(data);
+                var message = alertResult(object.code, object.message, object.sql);
+
+                $('#result').html(message);
+                if(parseInt(object.code) == 0) {
+                    var id = object.id_word;
+                    tr.find('td.status').fadeOut('fast', function() {
+                        $(this).html($('p.status-synonym-added').html()).fadeIn('fast');
+                    });
+                    tr.find('td.id').html(id);
+                    tr.find('td.word').html(createWord(id, word));
+                    tr.find('td.action').find('button').fadeOut('fast');
+                }
+            },
+            error: function(request, status, error) {
+                alert(request.responseText);
+            }
+        });
+    });
+
+
+    $('#tableList').on('click', 'a', function() {
+        var id = $(this).attr('data');
+        var word = $(this).html();
+        post('index.php?view=config', {id1: id, word1: word}, 'post');
+        return false;
+    });
+
 });
 
 function getCategoryId() {
@@ -114,4 +164,8 @@ function getCategoryId() {
 
 function getLanguageId() {
     return $('#selectLanguage').find('button').attr('data');
+}
+
+function createWord(_id, _word) {
+    return '<a href="index.php?view=config" data="' + _id + '">' + _word + '</a>';
 }

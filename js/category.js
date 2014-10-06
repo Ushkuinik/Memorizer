@@ -198,11 +198,11 @@ $(document).ready(function() {
     });
 
 
-    $('#tableList').on('click', '.clickable', function() {
-        var id = $(this).parents('tr').find('button').attr('data');
+    $('#tableList').on('click', 'a', function() {
+        var id = $(this).attr('data');
         var word = $(this).html();
-        bake_cookie('memorizer_ids', {id: id, word: word});
-        window.location.replace("index.php?view=config");
+        post('index.php?view=config', {id1: id, word1: word}, 'post');
+        return false;
     });
 });
 
@@ -294,14 +294,14 @@ function clearTable() {
 }
 
 function createRow(_id, _word, _translations) {
-    var word = '<a href="index.php?view=config&id1=' + _id + '">' + _word + '</a>';
+    var word = '<a href="#" data="' + _id + '">' + _word + '</a>';
 
     //var count = Object.keys(_translations).length;
     var translations = '';
     for(t in _translations) {
         if(translations.length > 0)
             translations += ', '
-        translations += '<a href="index.php?view=config&id1=' + t + '">' + _translations[t] + '</a>'
+        translations += '<a href="#" data="' + t + '">' + _translations[t] + '</a>'
     }
 
     if(getCategoryId() > 0) {
