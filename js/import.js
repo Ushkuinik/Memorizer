@@ -27,13 +27,13 @@ $(document).ready(function() {
         console.log("Добавляем новое слово");
 
         var data = $('#textImport').val();
-        var id_language = getLanguageId();
-        var id_category = getCategoryId();
+        var language_id = getLanguageId();
+        var category_id = getCategoryId();
 
         $.ajax({
             type: 'POST',
             url: 'ajax.php',
-            data: {command: "importWords", data: data, idLanguage: id_language, idCategory: id_category},
+            data: {command: "importWords", data: data, language_id: language_id, category_id: category_id},
             success: function(data) {
                 console.log(data);
 
@@ -43,7 +43,7 @@ $(document).ready(function() {
                 $('#result').html(message);
                 if(parseInt(object.code) == 0) {
                     var status = object.status;
-                    var id_language = object.id_language;
+                    var language_id = object.language_id;
 
                     var table;
                     for(var i in status) {
@@ -133,7 +133,7 @@ $(document).ready(function() {
 
                 $('#result').html(message);
                 if(parseInt(object.code) == 0) {
-                    var id = object.id_word;
+                    var id = object.word_id;
                     tr.find('td.status').fadeOut('fast', function() {
                         $(this).html($('p.status-synonym-added').html()).fadeIn('fast');
                     });

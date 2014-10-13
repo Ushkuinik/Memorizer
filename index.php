@@ -5,6 +5,7 @@ include_once("pageTester.php");
 include_once("pageConfig.php");
 include_once("pageImport.php");
 include_once("pageCategory.php");
+include_once("pageStatistics.php");
 
 include_once("i18n.php");
 
@@ -36,6 +37,10 @@ try {
 
         case 'category':
             $page = new pageCategory($mysqli);
+            break;
+
+        case 'statistics':
+            $page = new pageStatistics($mysqli);
             break;
 
         default:
@@ -82,7 +87,8 @@ try {
     $tpl = str_replace('[+footer+]', $pageFooter, $tpl);
     $tpl = str_replace('[+script+]', $pageScript, $tpl);
 
-    $tpl = processContent($tpl, "RU");
+    $language = getLanguage($_SERVER['HTTP_ACCEPT_LANGUAGE']);
+    $tpl = processContent($tpl, $language);
 
     // выводим страницу
     echo $tpl;
@@ -100,7 +106,7 @@ function getAlert($e)
         '<div class="panel panel-danger">
           <div class="panel-heading"><strong>Exception! </strong></div>
           <div class="panel-body">' . $e->getMessage() . ' <em>(' . $e->getFile() . " [" . $e->getLine() . '])</em></div>
-</div>';
+        </div>';
 
     return $content;
 }

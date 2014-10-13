@@ -32,8 +32,8 @@ $(document).ready(function() {
 
                 $('#result').html(message);
                 if(parseInt(object.code) == 0) {
-                    setWordId('1', object.id_word);
-                    switchToEditMode('1', object.id_word)
+                    setWordId('1', object.word_id);
+                    switchToEditMode('1', object.word_id)
                 }
             },
             error: function(request, status, error) {
@@ -139,8 +139,8 @@ $(document).ready(function() {
 
                 $('#result').html(message);
                 if(parseInt(object.code) == 0) {
-                    setWordId('2', object.id_word);
-                    switchToEditMode('2', object.id_word)
+                    setWordId('2', object.word_id);
+                    switchToEditMode('2', object.word_id)
                 }
             },
             error: function(request, status, error) {
@@ -335,7 +335,7 @@ $(document).ready(function() {
                         $('#inputStructure1').val(word.structure);
                         $('#inputBrief1').val(word.brief);
 
-                        setLanguageId('1', word.id_language); //$('#selectLanguage1').attr('data-value', word.id_language);
+                        setLanguageId('1', word.language_id); //$('#selectLanguage1').attr('data-value', word.language_id);
 
                         switchToEditMode('1', id);
                         $("#wordCard1").html(createWordCard(word));
@@ -408,7 +408,7 @@ $(document).ready(function() {
                         $('#inputStructure2').val(word.structure);
                         $('#inputBrief2').val(word.brief);
 
-                        setLanguageId('2', word.id_language); //$('#selectLanguage2').attr('data-value', word.id_language);
+                        setLanguageId('2', word.language_id);
                     }
                     switchToEditMode('2', id);
                     $("#wordCard2").html(createWordCard(word));

@@ -1,7 +1,5 @@
 $(document).ready(function() {
     "use strict";
-    checkAssignButton();
-    checkButtons();
 
     $('#selectCategory').on('click', '.dropdown-menu a', function(e) {
         e.preventDefault();
@@ -15,6 +13,9 @@ $(document).ready(function() {
         ajaxGetCategoryAssignments(category_id);
 
         checkAssignButton();
+        setCookie('category_id', category_id);
+        setCookie('category_name', text);
+
         return true;
     });
 
@@ -96,6 +97,8 @@ $(document).ready(function() {
 
     $('#searchWord').submit(function(e) {
         checkAssignButton();
+        setCookie('word', getWord());
+        setCookie('word_id', getWordId());
     });
 
     $("#searchWord").keyup(function(event) {
@@ -104,6 +107,8 @@ $(document).ready(function() {
             (event.keyCode != 38)) {
             setWordId(0);
             checkAssignButton();
+            setCookie('word', getWord());
+            setCookie('word_id', getWordId());
         }
     });
 
@@ -204,6 +209,27 @@ $(document).ready(function() {
         post('index.php?view=config', {id1: id, word1: word}, 'post');
         return false;
     });
+
+    $('#selectLanguage a').click(function(e) {
+        e.preventDefault();
+        var id = $(this).attr('href');
+        var name = $(this).html();
+        var button = $(this).parents('.btn-group').children('button');
+        button.html(name + ' <span class="caret"></span>').attr('data', id).click();
+        ajaxGetCategoryAssignments(id);
+        return false;
+    });
+
+
+    var id = getCookie('category_id');
+    if(id != null) {
+        var name = getCookie('category_name');
+        setCategory(id, name);
+        ajaxGetCategoryAssignments(id);
+    }
+
+    checkAssignButton();
+    checkButtons();
 });
 
 function checkAssignButton() {
@@ -255,6 +281,10 @@ function setCategoryId(_id) {
     return $('#selectCategory').find('input').attr('data', _id);
 }
 
+function setCategory(_id, _name) {
+    return $('#selectCategory').find('input').attr('data', _id).val(_name);
+}
+
 function searchCategory(_category_name) {
     var i = $('#selectCategory').find('li').filter(function() {
         return ($(this).find('a').html() === _category_name);
@@ -278,6 +308,8 @@ function updateCategory(_id, _name) {
 function addCategory(_category_id, _category_name) {
     $('#selectCategory').find('ul').append('<li><a href="' + _category_id + '">' + _category_name + '</a></li>')
     $('#selectCategory').find('input').val(_category_name).attr('data', _category_id);
+    setCookie('category_id', _category_id);
+    setCookie('category_name', _category_name);
 }
 
 function deleteCategory(_category_id) {
@@ -301,7 +333,7 @@ function createRow(_id, _word, _translations) {
     for(t in _translations) {
         if(translations.length > 0)
             translations += ', '
-        translations += '<a href="#" data="' + t + '">' + _translations[t] + '</a>'
+        translations += '<a href="#" data="' + t + '">' + _translations[t]['word'] + '</a>'
     }
 
     if(getCategoryId() > 0) {
@@ -320,6 +352,28 @@ function createRow(_id, _word, _translations) {
     //return '<tr><td><span class="clickable">' + word + '</span></td><td>' + action + '</td></tr>';
 }
 
+function setCookie(_key, _value) {
+    var cookie = "memorizer_category";
+    var object = read_cookie(cookie);
+    if(object == null)
+        object = {};
+    object[_key] = _value;
+    bake_cookie(cookie, object);
+}
+
+function getCookie(_key) {
+    var cookie = "memorizer_category";
+    var object = read_cookie(cookie);
+    if(object != null)
+        return object[_key];
+    return null
+}
+
+function getLanguageId() {
+    return $('#selectLanguage').find('button').attr('data');
+}
+
+
 function ajaxGetCategoryAssignments(_category_id) {
     $.ajax({
         type: 'POST',
@@ -334,10 +388,14 @@ function ajaxGetCategoryAssignments(_category_id) {
             $('#result').html(message);
             if(parseInt(object.code) == 0) {
                 var words = object.words;
-                clearTable()
+                clearTable();
+                var filter = getLanguageId();
                 if(words != undefined) {
                     for(var id in words) {
                         var word = words[id].word;
+                        var language_id = words[id].language_id;
+                        if((filter != 0) && (language_id != filter))
+                            continue;
                         var translations = words[id].translations;
                         var row = createRow(id, word, translations);
                         $('#tableList tbody').append(row);

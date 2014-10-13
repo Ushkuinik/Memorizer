@@ -28,7 +28,7 @@ class pageCategory extends Page
                 <p><button id="buttonAddCategory" class="btn btn-primary" data-toggle="modal" data-target="#modalAddCategory"><span class="glyphicon glyphicon-plus"></span>&nbsp;&nbsp;@string:button_add_category</button></p>
             </div>
             <div class="col-sm-8 col-md-8 col-lg-8">
-                ' . $this->getCategoryDropDownWithExtra(0, 'selectCategory') . '
+                [+CategoryDropDown+]
             </div>
             <div class="col-sm-4 col-md-4 col-lg-4">
                 <button id="buttonRenameCategory" class="btn btn-success" data-toggle="modal" data-target="#modalRenameCategory"><span class="glyphicon glyphicon-edit"></span>&nbsp;&nbsp;@string:button_rename_category</button>
@@ -36,7 +36,7 @@ class pageCategory extends Page
             </div>
 
             <div class="col-sm-8 col-md-8 col-lg-8">
-                ' . $this->getSearchComboBox("searchWord", "@string:placeholder_search_word", 0, '') . '
+                [+SearchComboBox+]
             </div>
             <div class="col-sm-4 col-md-4 col-lg-4">
                 <button id="buttonAssignWord" class="btn btn-primary btn-block"><span class="glyphicon glyphicon-plus"></span>&nbsp;&nbsp;@string:button_assign_to_category</button>
@@ -44,6 +44,7 @@ class pageCategory extends Page
 
 
             <div class="col-sm-12 col-md-12 col-lg-12">
+                [+LanguageDropDown+]
                 <table id="tableList" class="table">
                     <thead>
                         <tr>
@@ -57,7 +58,9 @@ class pageCategory extends Page
                 </table>
             </div>
             <div class="hidden" hidden="hidden">
-                <p class="action-delete-from-category"><button class="btn btn-xs btn-warning delete-from-category" data="[+word_id+]"><span class="glyphicon glyphicon-minus"></span>&nbsp;&nbsp;@string:button_delete_from_category</button></p>
+                <p class="action-delete-from-category">
+                    <button class="btn btn-xs btn-warning delete-from-category" data="[+word_id+]"><span class="glyphicon glyphicon-minus"></span>&nbsp;&nbsp;@string:button_delete_from_category</button>
+                </p>
             </div>
 
             <!-- Modal Rename Category-->
@@ -117,6 +120,9 @@ class pageCategory extends Page
               </div>
             </div>
 ';
+        $content = str_replace('[+CategoryDropDown+]', $this->getCategoryDropDownWithExtra(0, 'selectCategory'), $content);
+        $content = str_replace('[+SearchComboBox+]', $this->getSearchComboBox("searchWord", "@string:placeholder_search_word", 0, ''), $content);
+        $content = str_replace('[+LanguageDropDown+]', $this->getLanguageDropDown(1, 'selectLanguage'), $content);
 
         return $content;
     }

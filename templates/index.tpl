@@ -51,6 +51,7 @@
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="fw/bootstrap/js/bootstrap.js"></script>
+<script src="fw/flot/jquery.flot.js"></script>
 <script src="js/cookie.js"></script>
 <script src="js/utility.js"></script>
 <script src="js/search.js"></script>

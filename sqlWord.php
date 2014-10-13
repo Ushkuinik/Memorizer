@@ -28,11 +28,11 @@ SELECT
     word.word,
     word.structure,
     brief.brief,
-    word.id_part_of_speech
+    word.part_of_speech_id
 FROM word
-LEFT JOIN brief ON brief.id_word=word.id
+LEFT JOIN brief ON brief.word_id=word.id
 LEFT JOIN category_word ON category_word.word_id=word.id
-WHERE id_language=$_language_id $category_condition
+WHERE  =$_language_id $category_condition
 ORDER BY RAND()
 LIMIT 1";*/
         $language_id = (int)$_language_id;
@@ -48,21 +48,21 @@ SELECT
 	w1.word               as word1,
 	w1.structure          as structure1,
 	b1.brief              as brief1,
-	w1.id_language        as language1,
-	w1.id_part_of_speech  as id_part_of_speech1,
+	w1.language_id        as language1,
+	w1.part_of_speech_id  as part_of_speech_id1,
 	w2.id                 as id2,
 	w2.word               as word2,
 	w2.structure          as structure2,
-	w2.id_language        as language2,
-	w2.id_part_of_speech  as id_part_of_speech2,
+	w2.language_id        as language2,
+	w2.part_of_speech_id  as part_of_speech_id2,
 	b2.brief              as brief2
 FROM word w1
-LEFT JOIN brief b1 ON b1.id_word=w1.id
+LEFT JOIN brief b1 ON b1.word_id=w1.id
 LEFT JOIN category_word cw ON cw.word_id=w1.id
-LEFT JOIN translate t ON t.id_word_from=w1.id
-LEFT JOIN word w2 ON w2.id=t.id_word_to
-LEFT JOIN brief b2 ON b2.id_word=w2.id
-WHERE (w1.id_language=$language_id OR w2.id_language=$language_id) $category_condition
+LEFT JOIN translate t ON t.word_id_from=w1.id
+LEFT JOIN word w2 ON w2.id=t.word_id_to
+LEFT JOIN brief b2 ON b2.word_id=w2.id
+WHERE (w1.language_id=$language_id OR w2.language_id=$language_id) $category_condition
 ORDER BY RAND()
 LIMIT 1;";
 
@@ -76,13 +76,13 @@ LIMIT 1;";
                     $word['id']                = $object->id1;
                     $word['word']              = $object->word1;
                     $word['structure']         = $object->structure1;
-                    $word['id_part_of_speech'] = $object->id_part_of_speech1;
+                    $word['part_of_speech_id'] = $object->part_of_speech_id1;
                     $word['brief']             = $object->brief1;
                 } elseif($object->language2 == $language_id) {
                     $word['id']                = $object->id2;
                     $word['word']              = $object->word2;
                     $word['structure']         = $object->structure2;
-                    $word['id_part_of_speech'] = $object->id_part_of_speech2;
+                    $word['part_of_speech_id'] = $object->part_of_speech_id2;
                     $word['brief']             = $object->brief2;
                 } else {
                     $result['code']    = 1;
@@ -121,11 +121,11 @@ SELECT
     word.id,
     word.word,
     word.structure,
-    word.id_part_of_speech,
-    word.id_language,
+    word.part_of_speech_id,
+    word.language_id,
     brief.brief
 FROM word
-LEFT JOIN brief ON brief.id_word=word.id
+LEFT JOIN brief ON brief.word_id=word.id
 WHERE word.id=' . $_id;
 
         $sql_result        = $_mysqli->query($result['sql']);
@@ -137,8 +137,8 @@ WHERE word.id=' . $_id;
                 $word['id']                = $_id;
                 $word['word']              = $object->word;
                 $word['structure']         = $object->structure;
-                $word['id_part_of_speech'] = $object->id_part_of_speech;
-                $word['id_language']       = $object->id_language;
+                $word['part_of_speech_id'] = $object->part_of_speech_id;
+                $word['language_id']       = $object->language_id;
                 $word['brief']             = $object->brief;
                 if($_flag)
                     $word['translation'] = sqlGetWordTranslations($_mysqli, $_id, $result);
@@ -178,7 +178,7 @@ WHERE word.word LIKE '$_word'";
     if($result['code'] == 0)
         if ($sql_result->num_rows > 0)
             if($object = $sql_result->fetch_object())
-                $result['id_word'] = $object->id;
+                $result['word_id'] = $object->id;
             else {
                 $result['code'] = 1;
                 $result['message'] = 'Failed to fetch object';
@@ -196,13 +196,13 @@ function sqlGetWordTranslations($_mysqli, $_id, &$_result) //FIXME: rework to re
     $_result['sql'] = "
         SELECT
             translate.id,
-            word.id as id_word,
+            word.id as word_id,
             word.word,
             word.structure,
-            word.id_language
+            word.language_id
         FROM translate
-        LEFT JOIN word ON id_word_to=word.id
-        WHERE id_word_from=" . $_id . "
+        LEFT JOIN word ON word_id_to=word.id
+        WHERE word_id_from=" . $_id . "
         ORDER BY weight";
 
     $sql_result         = $_mysqli->query($_result['sql']);
@@ -211,10 +211,10 @@ function sqlGetWordTranslations($_mysqli, $_id, &$_result) //FIXME: rework to re
 
     if($_result['code'] == 0) {
         while($object = $sql_result->fetch_object()) {
-            $translation['id']          = $object->id_word;
+            $translation['id']          = $object->word_id;
             $translation['word']        = $object->word;
             $translation['structure']   = $object->structure;
-            $translation['id_language'] = $object->id_language;
+            $translation['language_id'] = $object->language_id;
             $translations[$object->id]  = $translation;
         }
     }
@@ -227,11 +227,11 @@ function sqlGetWordTranslations($_mysqli, $_id, &$_result) //FIXME: rework to re
  * @param $_word
  * @param $_structure
  * @param $_brief
- * @param $_idLanguage
- * @param $_idPartOfSpeech
+ * @param $_language_id
+ * @param $_part_of_speech_id
  * @return mixed
  */
-function sqlAddWord($_word, $_structure, $_brief, $_idLanguage, $_idPartOfSpeech)
+function sqlAddWord($_word, $_structure, $_brief, $_language_id, $_part_of_speech_id)
 {
     global $mysqli;
     $result['code'] = 0;
@@ -239,8 +239,8 @@ function sqlAddWord($_word, $_structure, $_brief, $_idLanguage, $_idPartOfSpeech
     $word           = getSafeString($mysqli, $_word, 50);
     $structure      = getSafeString($mysqli, $_structure, 50);
     $brief          = getSafeString($mysqli, $_brief, 200);
-    $idLanguage     = getSafeString($mysqli, $_idLanguage, 10);
-    $idPartOfSpeech = getSafeString($mysqli, $_idPartOfSpeech, 10);
+    $idLanguage     = getSafeString($mysqli, $_language_id, 10);
+    $idPartOfSpeech = getSafeString($mysqli, $_part_of_speech_id, 10);
 
     if(empty($word)) {
         $result['code']    = 1;
@@ -258,8 +258,8 @@ function sqlAddWord($_word, $_structure, $_brief, $_idLanguage, $_idPartOfSpeech
                 INSERT INTO word (
                     word,
                     structure,
-                    id_language,
-                    id_part_of_speech)
+                    language_id,
+                    part_of_speech_id)
                 VALUES (
                     '$word',
                     '$structure',
@@ -276,7 +276,7 @@ function sqlAddWord($_word, $_structure, $_brief, $_idLanguage, $_idPartOfSpeech
             if(($result['code'] == 0) && !empty($brief)) {
                 $result = sqlAddBrief($word_id, $brief);
             }
-            $result['id_word'] = $word_id; // restoring word_id
+            $result['word_id'] = $word_id; // restoring word_id
         }
     }
 
@@ -312,20 +312,20 @@ function sqlGetLastInsertedId()
 
 /**
  * Parameters should be sql-injection safe
- * @param $_id_word - word id
+ * @param $_word_id - word id
  * @param $_brief - brief description of the word
  * @return returns result structure
  */
-function sqlAddBrief($_id_word, $_brief)
+function sqlAddBrief($_word_id, $_brief)
 {
     global $mysqli;
 
     $result['sql'] = "
                 INSERT INTO brief (
-                    id_word,
+                    word_id,
                     brief)
                 VALUES (
-                    '$_id_word',
+                    '$_word_id',
                     '$_brief');";
 
     $sql_result        = $mysqli->query($result['sql']);
@@ -337,18 +337,18 @@ function sqlAddBrief($_id_word, $_brief)
 
 /**
  * Parameters should be sql-injection safe
- * @param $_id_word - word id
+ * @param $_word_id - word id
  * @param $_brief - brief description of the word
  * @return returns result structure
  */
-function sqlUpdateBrief($_id, $_id_word, $_brief)
+function sqlUpdateBrief($_id, $_word_id, $_brief)
 {
     global $mysqli;
 
     $result['sql'] = "
         UPDATE brief
         SET
-            id_word='$_id_word',
+            word_id='$_word_id',
             brief='$_brief'
         WHERE
             id='$_id';";
@@ -382,7 +382,7 @@ function sqlDeleteBrief($_id)
  * @param $_id
  * @return string
  */
-function sqlEditWord($_id, $_word, $_structure, $_brief, $_idLanguage, $_idPartOfSpeech)
+function sqlEditWord($_id, $_word, $_structure, $_brief, $_language_id, $_part_of_speech_id)
 {
     global $mysqli;
     $result['code'] = 0;
@@ -396,8 +396,8 @@ function sqlEditWord($_id, $_word, $_structure, $_brief, $_idLanguage, $_idPartO
         $word           = getSafeString($mysqli, $_word, 50);
         $structure      = getSafeString($mysqli, $_structure, 50);
         $brief          = getSafeString($mysqli, $_brief, 200);
-        $idLanguage     = getSafeString($mysqli, $_idLanguage, 10);
-        $idPartOfSpeech = getSafeString($mysqli, $_idPartOfSpeech, 10);
+        $language_id     = getSafeString($mysqli, $_language_id, 10);
+        $part_of_speech_id = getSafeString($mysqli, $_part_of_speech_id, 10);
 
         if($id == 0) {
             $result['code']    = 1;
@@ -410,8 +410,8 @@ function sqlEditWord($_id, $_word, $_structure, $_brief, $_idLanguage, $_idPartO
                     SET
                         word='$word',
                         structure='$structure',
-                        id_language='$idLanguage',
-                        id_part_of_speech='$idPartOfSpeech'
+                        language_id='$language_id',
+                        part_of_speech_id='$part_of_speech_id'
                     WHERE id='$id';";
 
             $sql_result        = $mysqli->query($result['sql']);
@@ -445,10 +445,10 @@ function sqlEditWord($_id, $_word, $_structure, $_brief, $_idLanguage, $_idPartO
 
 /**
  * Checks if description for specified word exists
- * @param $_id_word word id (safe)
+ * @param $_word_id word id (safe)
  * @return record id, 0 if no such record
  */
-function sqlGetBriefByMemo($_id_word)
+function sqlGetBriefByMemo($_word_id)
 {
     global $mysqli;
 
@@ -456,7 +456,7 @@ function sqlGetBriefByMemo($_id_word)
     $result['sql'] = "
         SELECT *
         FROM brief
-        WHERE id_word='$_id_word'
+        WHERE word_id='$_word_id'
         LIMIT 1;";
     $sql_result = $mysqli->query($result['sql']);
     $result['code']    = ($sql_result) ? 0 : 1;
@@ -487,12 +487,12 @@ function sqlDeleteWord($_id)
         $result['message'] = "Invalid word id: " . $_id;
     }
     if($result['code'] == 0) {
-        $result['sql']     = "DELETE FROM brief WHERE id_word=$_id";
+        $result['sql']     = "DELETE FROM brief WHERE word_id=$_id";
         $result['code']    = ($mysqli->query($result['sql'])) ? 0 : 1;
         $result['message'] = ($result['code'] == 0) ? "Brief deleted." : "Brief can't be deleted.";
     }
     if($result['code'] == 0) {
-        $result['sql']     = "DELETE FROM translate WHERE (id_word_from=$_id) OR (id_word_to=$_id)";
+        $result['sql']     = "DELETE FROM translate WHERE (word_id_from=$_id) OR (word_id_to=$_id)";
         $result['code']    = ($mysqli->query($result['sql'])) ? 0 : 1;
         $result['message'] = ($result['code'] == 0) ? "Links deleted." : "Links can't be deleted.";
     }
@@ -529,8 +529,8 @@ function sqlLinkWords($_id1, $_id2)
     if($id == 0) {
         $result['sql'] = "
                 INSERT INTO translate (
-                    id_word_from,
-                    id_word_to)
+                    word_id_from,
+                    word_id_to)
                 VALUES (
                     '$id1',
                     '$id2');";
@@ -544,8 +544,8 @@ function sqlLinkWords($_id1, $_id2)
     if($id == 0) {
         $result['sql'] = "
                 INSERT INTO translate (
-                    id_word_from,
-                    id_word_to)
+                    word_id_from,
+                    word_id_to)
                 VALUES (
                     '$id2',
                     '$id1');";
@@ -569,7 +569,7 @@ function sqlUnlinkWords($_id1, $_id2)
         return $result;
     }
 
-    $result['sql']     = "DELETE FROM translate WHERE ((id_word_from=$_id1) AND (id_word_to=$_id2)) OR ((id_word_from=$_id2) AND (id_word_to=$_id1))";
+    $result['sql']     = "DELETE FROM translate WHERE ((word_id_from=$_id1) AND (word_id_to=$_id2)) OR ((word_id_from=$_id2) AND (word_id_to=$_id1))";
     $result['code']    = ($mysqli->query($result['sql'])) ? 0 : 1;
     $result['message'] = ($result['code'] == 0) ? "Links deleted." : "Links can't be deleted.";
 
@@ -584,7 +584,7 @@ function sqlGetLinkById1Id2($_id1, $_id2) //FIXME: rework on return result inste
     $result['sql'] = "
         SELECT *
         FROM translate
-        WHERE (id_word_from='$_id1' AND id_word_to='$_id2')
+        WHERE (word_id_from='$_id1' AND word_id_to='$_id2')
         LIMIT 1;";
     $sql_result = $mysqli->query($result['sql']);
     $result['code']    = ($sql_result) ? 0 : 1;
@@ -608,7 +608,7 @@ function getSafeString($_mysqli, $_string, $_length)
     return $result;
 }
 
-function sqlImportWords($_data, $_id_language, $_id_category) {
+function sqlImportWords($_data, $_language_id, $_id_category) {
     global $mysqli;
     $data = str_replace("\n\r", "\n", $_data);
     $lines = explode("\n", $data);
@@ -638,15 +638,15 @@ function sqlImportWords($_data, $_id_language, $_id_category) {
 
             $result_inner = sqlGetWordByWord($mysqli, $word);
 
-            if($result_inner['id_word'] == 0) {
-                $result_inner = sqlAddWord($word, $structure, $brief, $_id_language, $part_of_speech);
+            if($result_inner['word_id'] == 0) {
+                $result_inner = sqlAddWord($word, $structure, $brief, $_language_id, $part_of_speech);
                 if($result_inner['code'] == 0) {
                     $status_code = 0;    // successfully added
-                    $word_id = $result_inner['id_word'];
+                    $word_id = $result_inner['word_id'];
 
                     if($_id_category > 0) {
-                        $result_inner = sqlAssignWordToCategory($word_id, $_id_category); // this call will overwrite $result_inner['id_word']
-                        $result_inner['id_word'] = $word_id; // restore overwritten word_id
+                        $result_inner = sqlAssignWordToCategory($word_id, $_id_category); // this call will overwrite $result_inner['word_id']
+                        $result_inner['word_id'] = $word_id; // restore overwritten word_id
                         //FIXME: rework functions to accept result as parameter to avoid previous data rewrite
                     }
                     if($result_inner['code'] != 0)
@@ -662,12 +662,12 @@ function sqlImportWords($_data, $_id_language, $_id_category) {
                 $status['structure']      = $structure;
                 $status['brief']          = $brief;
                 $status['part_of_speech'] = $part_of_speech;
-                $status['language_id']    = $_id_language;
+                $status['language_id']    = $_language_id;
             }
 
             $status['word'] = $word;
             $status['code'] = $status_code;
-            $status['id'] = $result_inner['id_word'];
+            $status['id'] = $result_inner['word_id'];
 
             $result['status'][$k] = $status;
             $result['code'] = $result_inner['code'];
@@ -835,64 +835,75 @@ function sqlGetCategoryAssignments($_category_id) {
     if($_category_id > 0)
         $result['sql'] = "
             SELECT
-                w1.id   as word_id1,
-                w1.word as word1,
-                w2.id   as word_id2,
-                w2.word as word2
+                w1.id           as word_id1,
+                w1.word         as word1,
+                w1.language_id  as language_id1,
+                w2.id           as word_id2,
+                w2.word         as word2,
+                w2.language_id  as language_id2
             FROM category_word cw
             LEFT JOIN word w1     ON w1.id=cw.word_id
-            LEFT JOIN translate t ON t.id_word_from=cw.word_id
-            LEFT JOIN word w2     ON w2.id=t.id_word_to
+            LEFT JOIN translate t ON t.word_id_from=cw.word_id
+            LEFT JOIN word w2     ON w2.id=t.word_id_to
             WHERE cw.category_id=$category_id";
     elseif($_category_id == -1)
         $result['sql'] = "
-        SELECT
-            w1.id   as word_id1,
-            w1.word as word1,
-            w2.id   as word_id2,
-            w2.word as word2
-        FROM word w1
-        LEFT JOIN translate t ON t.id_word_from=w1.id
-        LEFT JOIN word w2     ON w2.id=t.id_word_to
-        WHERE w1.id NOT IN (
-            SELECT word.id
-            FROM word
-            INNER JOIN category_word
-            ON word.id = category_word.word_id)
-        AND w2.id NOT IN (
-            SELECT word.id
-            FROM word
-            INNER JOIN category_word
-            ON word.id = category_word.word_id);";
+            SELECT
+                w1.id           as word_id1,
+                w1.word         as word1,
+                w1.language_id  as language_id1,
+                w2.id           as word_id2,
+                w2.word         as word2,
+                w2.language_id  as language_id2
+            FROM word w1
+            LEFT JOIN translate t ON t.word_id_from=w1.id
+            LEFT JOIN word w2     ON w2.id=t.word_id_to
+            WHERE w1.id NOT IN (
+                SELECT word.id
+                FROM word
+                INNER JOIN category_word
+                ON word.id = category_word.word_id)
+            AND w2.id NOT IN (
+                SELECT word.id
+                FROM word
+                INNER JOIN category_word
+                ON word.id = category_word.word_id);";
     elseif($_category_id == -2)
         $result['sql'] = "
-        SELECT
-            w1.id   as word_id1,
-            w1.word as word1
-        FROM word w1
-        LEFT JOIN translate t ON t.id_word_from=w1.id
-        LEFT JOIN word w2     ON w2.id=t.id_word_to
-        WHERE w1.id NOT IN (
-            SELECT word.id
-            FROM word
-            INNER JOIN translate
-            ON word.id = translate.id_word_from);";
+            SELECT
+                w1.id           as word_id1,
+                w1.word         as word1
+                w1.language_id  as language_id1
+            FROM word w1
+            LEFT JOIN translate t ON t.word_id_from=w1.id
+            LEFT JOIN word w2     ON w2.id=t.word_id_to
+            WHERE w1.id NOT IN (
+                SELECT word.id
+                FROM word
+                INNER JOIN translate
+                ON word.id = translate.word_id_from);";
 
     $sql_result        = $mysqli->query($result['sql']);
     $result['code']    = ($sql_result) ? 0 : 1;
     $result['message'] = ($result['code'] == 0) ? '' : 'Failed to make sql request';
     if(($sql_result) && ($sql_result->num_rows > 0)) {
         while($object = $sql_result->fetch_object()) {
-            $id   = $object->word_id1;
-            $word = $object->word1;
-            $translation_id   = $object->word_id2;
-            $translation_word = $object->word2;
+            $id          = $object->word_id1;
+            $word        = $object->word1;
+            $language_id = $object->language_id1;
+            $translation_id          = $object->word_id2;
+            $translation_word        = $object->word2;
+            $translation_language_id = $object->language_id2;
 
-            if(!isset($result['words'][$id]))
+            if(!isset($result['words'][$id])) {
                 $result['words'][$id]['word'] = $word;
+                $result['words'][$id]['language_id'] = $language_id;
+            }
 
-            if($translation_id > 0)
-                $result['words'][$id]['translations'][$translation_id] =  $translation_word;
+            if($translation_id > 0) {
+                $result['words'][$id]['translations'][$translation_id]['word'] =  $translation_word;
+                $result['words'][$id]['translations'][$translation_id]['language_id'] =  $translation_language_id;
+            }
         }
     }
 
@@ -1002,8 +1013,8 @@ function sqlGetWordsWithoutCategory() {
             w2.id,
             w2.word
         FROM word w1
-        LEFT JOIN translate t ON t.id_word_from=w1.word_id
-        LEFT JOIN word w2     ON w2.id=t.id_word_to
+        LEFT JOIN translate t ON t.word_id_from=w1.word_id
+        LEFT JOIN word w2     ON w2.id=t.word_id_to
         WHERE w1.id NOT IN (
             SELECT word.id
             FROM word
@@ -1025,6 +1036,34 @@ function sqlGetWordsWithoutCategory() {
 
             if($translation_id > 0)
                 $result['words'][$id]['translations'][$translation_id] =  $translation_word;
+        }
+    }
+
+    return $result;
+}
+
+function sqlGetStatistics() {
+    global $mysqli;
+
+    $result['sql'] = "
+        SELECT
+            w.language_id   as id,
+            COUNT(w.id)     as count,
+            l.code          as code
+        FROM word w
+        LEFT JOIN language l ON l.id=w.language_id
+        GROUP BY w.language_id;";
+
+    $sql_result        = $mysqli->query($result['sql']);
+    $result['code']    = ($sql_result) ? 0 : 1;
+    $result['message'] = ($result['code'] == 0) ? '' : 'Failed to make sql request';
+    if(($sql_result) && ($sql_result->num_rows > 0)) {
+        while($object = $sql_result->fetch_object()) {
+            $id   = $object->id;
+            $count = $object->count;
+            $code = $object->code;
+            $result['statistics'][$id]['count'] = $count;
+            $result['statistics'][$id]['code'] = $code;
         }
     }
 

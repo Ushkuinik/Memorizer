@@ -112,3 +112,7 @@ img.flag {
 .special a {
     background: #faf2cc;
 }
+
+#graph1, #graph2 {
+    height: 200px;
+}

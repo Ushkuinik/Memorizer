@@ -14,17 +14,14 @@ class i18n
 
 function processContent($_content, $_locale)
 {
-
-    global $g_strings;
-
     switch($_locale) {
-        case 'RU':
+        case 'ru':
             include_once("i18n/string_ru.php");
             break;
-        case 'EN':
+        case 'en':
             include_once("i18n/string_en.php");
             break;
-        case 'JP':
+        case 'jp':
             include_once("i18n/string_jp.php");
             break;
     }
@@ -49,4 +46,19 @@ function string_replace_callback($matches)
         return '<span class="undefined_resource">' . $matches[1] . '</span>';
 }
 
+
+function getLanguage($_accept_languages)
+{
+    $available_languages = array('ru', 'en', 'jp');
+
+    $accept_languages = strtolower($_accept_languages);
+    $languages = explode(',', $accept_languages);
+    foreach($languages as $language) {
+        foreach($available_languages as $a_language ) {
+            if(strcmp(substr($language, 0, 2), $a_language) == 0)
+                return $a_language;
+        }
+    }
+    return 'en';
+}
 ?>

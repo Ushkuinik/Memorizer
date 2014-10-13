@@ -39,7 +39,7 @@ switch($command) {
         break;
 
     case 'importWords':
-        $content = sqlImportWords($_REQUEST['data'], $_REQUEST['idLanguage'], $_REQUEST['idCategory']);
+        $content = sqlImportWords($_REQUEST['data'], $_REQUEST['language_id'], $_REQUEST['category_id']);
         break;
 
     case 'addCategory':
@@ -60,6 +60,10 @@ switch($command) {
         break;
     case 'getCategoryAssignments':
         $content = sqlGetCategoryAssignments($_REQUEST['category_id']);
+        break;
+
+    case 'getStatistics':
+        $content = sqlGetStatistics();
         break;
 }
 

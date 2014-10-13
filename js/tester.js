@@ -148,7 +148,7 @@ function updateCard(object) {
     $('#translation').html("");
     for(var t in translations) {
         trans = '<p class="translation">' + translations[t].word;
-        if(parseInt(translations[t].id_language) == 3) { // FIXME: hardcoded language
+        if(parseInt(translations[t].language_id) == 3) { // FIXME: hardcoded language
             trans += ' <span>(' + translations[t].structure + ')</span></p>'
         }
         $('#translation').html($('#translation').html() + trans);
@@ -167,7 +167,7 @@ function getStack() {
 
 
 function createStack() {
-    var ids = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    var ids = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     var stack = {ids: ids, last_index: 0, current_index: 0};
     return stack;
 }
